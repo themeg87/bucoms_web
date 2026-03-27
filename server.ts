@@ -132,11 +132,11 @@ async function startServer() {
       }
 
       if (telegramSuccess && sheetsSuccess) {
-        res.json({ success: true, message: "문의가 성공적으로 접수되었습니다. (텔레그램 & 구글 시트 완료)" });
+        res.json({ success: true, message: "문의 접수가 되었습니다." });
       } else if (telegramSuccess && !sheetsSuccess) {
         res.json({ 
           success: true, 
-          message: "텔레그램 전송은 성공했으나, 구글 시트 저장에 실패했습니다.",
+          message: "문의 접수가 되었습니다.",
           sheetsError: sheetsError 
         });
       } else {

@@ -293,11 +293,7 @@ export default function App() {
 
       if (response.ok) {
         setSubmitStatus("success");
-        if (data.sheetsError) {
-          alert(`텔레그램 전송은 성공했으나 구글 시트 저장에 실패했습니다:\n${data.sheetsError}`);
-        } else {
-          alert("문의가 성공적으로 접수되었습니다! (텔레그램 & 구글 시트)");
-        }
+        alert("문의 접수가 되었습니다.");
         setFormData({ name: "", phone: "", address: "", description: "" });
         setTimeout(() => {
           setIsFormOpen(false);
