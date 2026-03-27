@@ -697,7 +697,7 @@ export default function App() {
           <div className="grid md:grid-cols-3 gap-16">
             {[
               { label: "방문 수리 건수", value: "12,000+", icon: <Users /> },
-              { label: "전문 엔지니어 경력", value: "20년+", icon: <Wrench /> },
+              { label: "전문 엔지니어 경력", value: "10년+", icon: <Wrench /> },
               { label: "고객 만족도", value: "99.8%", icon: <Star /> }
             ].map((stat, i) => (
               <div key={i} className="text-center group">
