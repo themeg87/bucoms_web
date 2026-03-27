@@ -120,18 +120,26 @@ const STEPS = [
 ];
 
 const STATUS_POOL = [
-  { area: "부산 해운대구", service: "맥북 프로 배터리 교체", time: "방금 전" },
-  { area: "울산 남구", service: "윈도우 11 최적화 및 설치", time: "1분 전" },
-  { area: "김해 삼계동", service: "게이밍 PC 블루스크린 수리", time: "3분 전" },
-  { area: "양산 물금읍", service: "사무실 네트워크 공유 설정", time: "5분 전" },
-  { area: "부산 부산진구", service: "외장하드 데이터 복구", time: "7분 전" },
-  { area: "울산 중구", service: "노트북 액정 파손 수리", time: "10분 전" },
-  { area: "김해 내동", service: "아이맥 부팅 불량 수리", time: "12분 전" },
-  { area: "양산 덕계동", service: "조립 PC 견적 및 조립", time: "15분 전" },
-  { area: "부산 동래구", service: "컴퓨터 전원 불량 수리", time: "18분 전" },
-  { area: "울산 북구", service: "사무용 PC 업그레이드", time: "20분 전" },
-  { area: "김해 장유동", service: "노트북 힌지 파손 수리", time: "22분 전" },
-  { area: "양산 평산동", service: "랜섬웨어 감염 복구 상담", time: "25분 전" }
+  { area: "부산 해운대구", service: "맥북 프로 배터리 교체", time: "1시간 전" },
+  { area: "울산 남구", service: "윈도우 11 최적화 및 설치", time: "2시간 전" },
+  { area: "김해 삼계동", service: "게이밍 PC 블루스크린 수리", time: "3시간 전" },
+  { area: "양산 물금읍", service: "사무실 네트워크 공유 설정", time: "4시간 전" },
+  { area: "부산 부산진구", service: "외장하드 데이터 복구", time: "5시간 전" },
+  { area: "울산 중구", service: "노트북 액정 파손 수리", time: "6시간 전" },
+  { area: "김해 내동", service: "아이맥 부팅 불량 수리", time: "8시간 전" },
+  { area: "양산 덕계동", service: "조립 PC 견적 및 조립", time: "10시간 전" },
+  { area: "부산 동래구", service: "컴퓨터 전원 불량 수리", time: "12시간 전" },
+  { area: "울산 북구", service: "사무용 PC 업그레이드", time: "15시간 전" },
+  { area: "김해 장유동", service: "노트북 힌지 파손 수리", time: "18시간 전" },
+  { area: "양산 평산동", service: "랜섬웨어 감염 복구 상담", time: "21시간 전" },
+  { area: "부산 수영구", service: "CCTV 보안 시스템 점검", time: "1일 전" },
+  { area: "울산 동구", service: "기업용 NAS 서버 구축", time: "1일 전" },
+  { area: "김해 어방동", service: "조립 PC 선 정리 및 클리닝", time: "2일 전" },
+  { area: "양산 상북면", service: "포스기 연동 장애 해결", time: "2일 전" },
+  { area: "부산 사하구", service: "그래픽카드 서멀 재도포", time: "3일 전" },
+  { area: "울산 울주군", service: "무선 와이파이 증폭기 설치", time: "3일 전" },
+  { area: "김해 진영읍", service: "SSD 교체 및 데이터 마이그레이션", time: "4일 전" },
+  { area: "양산 하북면", service: "모니터 화면 무 증상 수리", time: "5일 전" }
 ];
 
 const PARTNERS = [
@@ -235,6 +243,42 @@ const Logo = ({ size = "text-2xl", className = "" }: { size?: string, className?
     <span className={`ml-1 px-1.5 py-0.5 font-bold bg-slate-900 text-white ${size}`}>COM_</span>
   </div>
 );
+
+const StatusTicker = ({ scrolled }: { scrolled: boolean }) => {
+  const [shuffledStatus, setShuffledStatus] = useState([...STATUS_POOL]);
+
+  useEffect(() => {
+    setShuffledStatus([...STATUS_POOL].sort(() => Math.random() - 0.5));
+  }, []);
+
+  return (
+    <div className={`fixed left-0 w-full z-40 transition-all duration-500 overflow-hidden border-b border-slate-100 bg-white/95 backdrop-blur-md ${scrolled ? 'top-[64px]' : 'top-[88px]'}`}>
+      <div className="flex items-center h-10">
+        <div className="bg-slate-900 text-white px-5 h-full flex items-center text-[10px] font-black uppercase tracking-widest shrink-0 z-10 shadow-[4px_0_24px_rgba(0,0,0,0.15)]">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse mr-2.5" />
+          실시간 접수 현황
+        </div>
+        <div className="flex gap-16 animate-marquee-left whitespace-nowrap items-center px-8">
+          {[...shuffledStatus, ...shuffledStatus, ...shuffledStatus].map((status, i) => (
+            <div key={i} className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-black text-slate-300 uppercase tracking-tighter">AREA</span>
+                <span className="text-[11px] font-bold text-slate-500">{status.area}</span>
+              </div>
+              <div className="w-px h-3 bg-slate-100" />
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-black text-slate-300 uppercase tracking-tighter">SERVICE</span>
+                <span className="text-[11px] font-extrabold text-slate-900">{status.service}</span>
+              </div>
+              <div className="w-px h-3 bg-slate-100" />
+              <span className="text-[10px] font-mono font-bold text-brand/60 uppercase">{status.time}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -370,6 +414,8 @@ export default function App() {
         </div>
       </nav>
 
+      <StatusTicker scrolled={scrolled} />
+
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isMenuOpen && (
@@ -462,7 +508,7 @@ export default function App() {
       </AnimatePresence>
 
       {/* Hero Section */}
-      <section className="relative pt-40 pb-20 lg:pt-56 lg:pb-40 overflow-hidden">
+      <section className="relative pt-48 pb-20 lg:pt-64 lg:pb-40 overflow-hidden">
         <div className="absolute top-0 right-0 w-1/2 h-full bg-slate-50 -z-10 hidden lg:block" />
         
         <div className="max-w-7xl mx-auto px-6">
@@ -521,41 +567,6 @@ export default function App() {
                   referrerPolicy="no-referrer"
                 />
               </div>
-              
-              {/* Floating Status Card - Recipe 1 Inspired */}
-              <motion.div 
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -top-10 -left-10 bg-slate-900 p-6 rounded-2xl shadow-3xl border border-white/10 hidden xl:block min-w-[240px]"
-              >
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-emerald-500">실시간 수리 현황</span>
-                  </div>
-                  <span className="text-[10px] font-mono text-white/30">v2.0.4</span>
-                </div>
-                <div className="space-y-4">
-                  <AnimatePresence mode="popLayout">
-                    {currentStatus.map((status, i) => (
-                      <motion.div 
-                        key={`${status.area}-${status.service}-${i}`}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 10 }}
-                        className="flex flex-col gap-1"
-                      >
-                        <div className="flex justify-between items-center">
-                          <span className="text-[10px] font-mono text-white font-bold">{status.area}</span>
-                          <span className="text-[8px] font-mono text-white/40 uppercase">{status.time}</span>
-                        </div>
-                        <div className="text-[11px] font-mono text-brand truncate">{status.service}</div>
-                        <div className="h-px bg-white/5 mt-1" />
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                </div>
-              </motion.div>
             </motion.div>
           </div>
         </div>
