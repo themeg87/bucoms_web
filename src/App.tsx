@@ -27,7 +27,10 @@ import {
   Users,
   MessageSquare,
   ArrowUpRight,
-  ArrowRight
+  ArrowRight,
+  ClipboardCheck,
+  Banknote,
+  History
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { TERMS_OF_SERVICE, PRIVACY_POLICY } from './constants/legal';
@@ -237,6 +240,12 @@ const LegalModal = ({ isOpen, onClose, title, content }: { isOpen: boolean, onCl
   </AnimatePresence>
 );
 
+const KakaoIcon = ({ className = "w-6 h-6" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.558 1.712 4.8 4.346 6.09l-.843 3.127c-.04.148.05.3.197.34.047.013.096.013.143 0l3.64-2.418c.5.05 1.01.076 1.517.076 4.97 0 9-3.185 9-7.115S16.97 3 12 3z" />
+  </svg>
+);
+
 const Logo = ({ size = "text-2xl", className = "" }: { size?: string, className?: string }) => (
   <div className={`flex items-center tracking-tighter font-sans ${className}`}>
     <span className={`font-light text-slate-900 ${size}`}>BU</span>
@@ -252,7 +261,7 @@ const StatusTicker = ({ scrolled }: { scrolled: boolean }) => {
   }, []);
 
   return (
-    <div className={`fixed left-0 w-full z-40 transition-all duration-500 overflow-hidden border-b border-slate-100 bg-white/95 backdrop-blur-md ${scrolled ? 'top-[64px]' : 'top-[88px]'}`}>
+    <div className={`fixed left-0 w-full z-[50] transition-all duration-500 overflow-hidden border-b border-slate-100 bg-white/95 backdrop-blur-md ${scrolled ? 'top-[64px]' : 'top-[88px]'}`}>
       <div className="flex items-center h-10">
         <div className="bg-slate-900 text-white px-5 h-full flex items-center text-[10px] font-black uppercase tracking-widest shrink-0 z-10 shadow-[4px_0_24px_rgba(0,0,0,0.15)]">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse mr-2.5" />
@@ -362,45 +371,33 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col selection:bg-brand/10 selection:text-brand">
       {/* Navigation */}
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled ? 'glass py-3' : 'bg-transparent py-6'}`}>
+      <nav className={`fixed top-0 w-full z-[60] transition-all duration-500 ${scrolled ? 'glass py-3' : 'bg-transparent py-6'}`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           <div className="flex items-center cursor-pointer group" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
             <Logo size="text-2xl" className="group-hover:scale-105 transition-transform" />
           </div>
 
-            <div className="hidden md:flex items-center gap-10">
-            {['services', 'process', 'reviews'].map((item) => (
+            <div className="hidden lg:flex items-center gap-10">
+            {['services', 'guarantee', 'process', 'reviews'].map((item) => (
               <button 
                 key={item}
                 onClick={() => scrollToSection(item)} 
-                className="text-sm font-semibold text-slate-500 hover:text-brand transition-colors tracking-wider"
+                className="text-sm font-semibold text-slate-500 hover:text-brand transition-colors tracking-wider whitespace-nowrap"
               >
-                {item === 'services' ? '서비스 안내' : item === 'process' ? '이용 절차' : '고객 후기'}
+                {item === 'services' ? '서비스 안내' : item === 'guarantee' ? '비용 안내' : item === 'process' ? '이용 절차' : '고객 후기'}
               </button>
             ))}
             <a 
               href="https://blog.naver.com/bucom_" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-sm font-semibold text-slate-500 hover:text-brand transition-colors tracking-wider"
+              className="text-sm font-semibold text-slate-500 hover:text-brand transition-colors tracking-wider whitespace-nowrap"
             >
               공식 블로그
             </a>
             <button 
-              onClick={() => setIsTermsOpen(true)}
-              className="text-sm font-semibold text-slate-500 hover:text-brand transition-colors tracking-wider"
-            >
-              이용약관
-            </button>
-            <button 
-              onClick={() => setIsPrivacyOpen(true)}
-              className="text-sm font-semibold text-slate-500 hover:text-brand transition-colors tracking-wider"
-            >
-              개인정보처리방침
-            </button>
-            <button 
               onClick={() => setIsFormOpen(true)}
-              className="bg-slate-900 text-white px-6 py-3 rounded-full text-sm font-bold hover:bg-brand transition-all flex items-center gap-2 shadow-xl shadow-slate-900/10 active:scale-95 cursor-pointer"
+              className="bg-slate-900 text-white px-6 py-3 rounded-full text-sm font-bold hover:bg-brand transition-all flex items-center gap-2 shadow-xl shadow-slate-900/10 active:scale-95 cursor-pointer whitespace-nowrap"
             >
               <MessageSquare className="w-4 h-4" />
               긴급 문의
@@ -408,7 +405,7 @@ export default function App() {
           </div>
 
           {/* Mobile Menu Toggle */}
-          <button className="md:hidden p-2 text-slate-900" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          <button className="lg:hidden p-2 text-slate-900" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <X /> : <Menu />}
           </button>
         </div>
@@ -426,7 +423,7 @@ export default function App() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMenuOpen(false)}
-              className="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-sm md:hidden"
+              className="fixed inset-0 z-[70] bg-slate-900/60 backdrop-blur-sm lg:hidden"
             />
             {/* Menu Content */}
             <motion.div 
@@ -434,7 +431,7 @@ export default function App() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 w-[80%] z-[70] bg-white md:hidden shadow-2xl flex flex-col"
+              className="fixed top-0 right-0 bottom-0 w-[80%] z-[80] bg-white lg:hidden shadow-2xl flex flex-col"
             >
               {/* Menu Header */}
               <div className="p-6 border-b border-slate-50 flex items-center justify-between">
@@ -452,6 +449,7 @@ export default function App() {
                 <div className="flex flex-col gap-2">
                   {[
                     { id: 'services', label: '서비스 안내', icon: Zap },
+                    { id: 'guarantee', label: '비용 안내', icon: Banknote },
                     { id: 'process', label: '이용 절차', icon: Clock },
                     { id: 'reviews', label: '고객 후기', icon: Users },
                   ].map((item) => (
@@ -493,12 +491,27 @@ export default function App() {
               </div>
 
               {/* Menu Footer */}
-              <div className="p-6 bg-slate-50 border-t border-slate-100">
-                <a href="tel:010-2222-0170" className="bg-brand text-white py-4 rounded-2xl text-base font-black flex items-center justify-center gap-2 shadow-lg shadow-brand/20 active:scale-[0.98] transition-transform">
-                  <Phone className="w-5 h-5" />
-                  지금 바로 전화하기
+              <div className="p-6 bg-slate-50 border-t border-slate-100 flex flex-col gap-3">
+                <a 
+                  href="http://pf.kakao.com/_nsgen/chat" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-[#FEE500] text-[#191919] py-4 rounded-2xl text-base font-black flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-transform"
+                >
+                  <KakaoIcon className="w-5 h-5" />
+                  카카오톡 상담
                 </a>
-                <p className="text-center text-[10px] text-slate-400 mt-4 font-bold tracking-widest uppercase">
+                <button 
+                  onClick={() => {
+                    setIsFormOpen(true);
+                    setIsMenuOpen(false);
+                  }}
+                  className="bg-brand text-white py-4 rounded-2xl text-base font-black flex items-center justify-center gap-2 shadow-lg shadow-brand/20 active:scale-[0.98] transition-transform"
+                >
+                  <MessageSquare className="w-5 h-5" />
+                  수리문의하기
+                </button>
+                <p className="text-center text-[10px] text-slate-400 mt-2 font-bold tracking-widest uppercase">
                   24시간 긴급 수리 지원
                 </p>
               </div>
@@ -533,11 +546,22 @@ export default function App() {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-5">
-                <a href="tel:010-2222-0170" className="group bg-brand text-white px-10 py-5 rounded-2xl text-lg font-black hover:bg-slate-900 transition-all flex items-center justify-center gap-3 shadow-2xl shadow-brand/20">
-                  <Phone className="w-6 h-6" />
-                  상담 신청하기
-                  <ArrowUpRight className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                </a>
+                <div className="flex flex-col gap-4 w-full sm:w-auto">
+                  <a 
+                    href="http://pf.kakao.com/_nsgen/chat"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-[#FEE500] text-[#191919] px-10 py-5 rounded-2xl text-lg font-black hover:bg-[#F7E600] transition-all flex items-center justify-center gap-3 shadow-xl active:scale-95"
+                  >
+                    <KakaoIcon className="w-6 h-6" />
+                    카카오톡 실시간 상담
+                  </a>
+                  <a href="tel:010-2222-0170" className="group bg-brand text-white px-10 py-5 rounded-2xl text-lg font-black hover:bg-slate-900 transition-all flex items-center justify-center gap-3 shadow-2xl shadow-brand/20">
+                    <Phone className="w-6 h-6" />
+                    상담 신청하기
+                    <ArrowUpRight className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  </a>
+                </div>
                 <div className="flex items-center gap-4 px-6 py-4 bg-slate-50 rounded-2xl border border-slate-100">
                   <div className="flex -space-x-3">
                     {[1,2,3,4].map(i => (
@@ -571,40 +595,7 @@ export default function App() {
           </div>
         </div>
       </section>
-
-      {/* Trust Bar */}
-      <div className="py-24 border-y border-slate-100 bg-slate-50/30">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-xs font-black uppercase tracking-[0.5em] text-slate-400 mb-3">공식 파트너 및 부품 지원</h2>
-            <div className="w-16 h-1 bg-brand mx-auto rounded-full opacity-30" />
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-8 items-center justify-items-center">
-            {PARTNERS.map(partner => (
-              <div key={partner.name} className="flex flex-col items-center gap-4 group w-full max-w-[100px]">
-                <div className="h-12 w-full flex items-center justify-center p-2 bg-white rounded-xl shadow-sm border border-slate-100 group-hover:shadow-md group-hover:border-brand/20 transition-all duration-500">
-                  <img 
-                    src={`https://logo.clearbit.com/${partner.domain}`} 
-                    alt={partner.name} 
-                    className="max-h-full max-w-full object-contain transition-all duration-500 group-hover:scale-110"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      if (!target.src.includes('google.com')) {
-                        target.src = `https://www.google.com/s2/favicons?domain=${partner.domain}&sz=128`;
-                      }
-                    }}
-                    referrerPolicy="no-referrer"
-                  />
-                </div>
-                <span className="text-[10px] font-black tracking-widest text-slate-400 group-hover:text-brand transition-colors uppercase text-center">
-                  {partner.name}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
+      
       {/* Services Section */}
       <section id="services" className="py-40 bg-white">
         <div className="max-w-7xl mx-auto px-6">
@@ -644,6 +635,104 @@ export default function App() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Trust Bar */}
+      <div className="py-24 border-y border-slate-100 bg-slate-50/30">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-xs font-black uppercase tracking-[0.5em] text-slate-400 mb-3">공식 파트너 및 부품 지원</h2>
+            <div className="w-16 h-1 bg-brand mx-auto rounded-full opacity-30" />
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-8 items-center justify-items-center">
+            {PARTNERS.map(partner => (
+              <div key={partner.name} className="flex flex-col items-center gap-4 group w-full max-w-[100px]">
+                <div className="h-12 w-full flex items-center justify-center p-2 bg-white rounded-xl shadow-sm border border-slate-100 group-hover:shadow-md group-hover:border-brand/20 transition-all duration-500">
+                  <img 
+                    src={`https://logo.clearbit.com/${partner.domain}`} 
+                    alt={partner.name} 
+                    className="max-h-full max-w-full object-contain transition-all duration-500 group-hover:scale-110"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      if (!target.src.includes('google.com')) {
+                        target.src = `https://www.google.com/s2/favicons?domain=${partner.domain}&sz=128`;
+                      }
+                    }}
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+                <span className="text-[10px] font-black tracking-widest text-slate-400 group-hover:text-brand transition-colors uppercase text-center">
+                  {partner.name}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* 4대 안심 약속 Section */}
+      <section id="guarantee" className="py-24 bg-white relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid lg:grid-cols-4 gap-8">
+            {[
+              {
+                icon: <Award className="w-8 h-8" />,
+                title: "10년 경력 엔지니어",
+                desc: "단순 알바생이 아닙니다. 10년 경력의 베테랑 엔지니어가 직접 방문하여 책임지고 수리합니다."
+              },
+              {
+                icon: <ClipboardCheck className="w-8 h-8" />,
+                title: "수리 전 견적 안내 필수",
+                desc: "수리 전 견적 안내는 필수입니다. 고객님의 동의 없이는 단 1원도 청구하지 않습니다."
+              },
+              {
+                icon: <Banknote className="w-8 h-8" />,
+                title: "거품 뺀 정직한 공임",
+                desc: "거품을 뺀 정직한 공임으로 운영됩니다. 점검 후 원인에 맞는 가장 합리적인 비용만 안내합니다."
+              },
+              {
+                icon: <History className="w-8 h-8" />,
+                title: "100% 책임 AS 보장",
+                desc: "수리 후 동일 증상 발생 시 100% 책임지고 다시 해결해 드리는 철저한 사후 관리를 보장합니다."
+              }
+            ].map((item, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="p-8 rounded-[2rem] bg-slate-50 border border-slate-100 hover:border-brand/20 hover:bg-white hover:shadow-xl transition-all group"
+              >
+                <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center text-brand mb-6 group-hover:scale-110 transition-transform">
+                  {item.icon}
+                </div>
+                <h4 className="text-xl font-bold text-slate-900 mb-3 tracking-tight">{item.title}</h4>
+                <p className="text-slate-500 text-sm leading-relaxed font-medium">{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+          
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-12 p-6 rounded-3xl bg-brand/5 border border-brand/10 flex flex-col md:flex-row items-center justify-between gap-6"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-brand text-white flex items-center justify-center shadow-lg shadow-brand/20">
+                <CheckCircle2 className="w-6 h-6" />
+              </div>
+              <div>
+                <h5 className="text-lg font-bold text-slate-900">부산·경남 전 지역 출장비 10,000원</h5>
+                <p className="text-sm text-slate-500 font-medium">수리 진행 시 출장비는 면제되어 더욱 합리적입니다.</p>
+              </div>
+            </div>
+            <a href="tel:010-2222-0170" className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-brand transition-colors shadow-xl">
+              지금 바로 상담하기
+            </a>
+          </motion.div>
         </div>
       </section>
 
@@ -811,6 +900,7 @@ export default function App() {
                 <h4 className="text-xs font-black text-slate-900 uppercase tracking-widest mb-8">바로가기</h4>
                 <ul className="space-y-4 text-sm font-bold text-slate-400">
                   <li><button onClick={() => scrollToSection('services')} className="hover:text-brand transition-colors cursor-pointer">서비스 안내</button></li>
+                  <li><button onClick={() => scrollToSection('guarantee')} className="hover:text-brand transition-colors cursor-pointer">비용 안내</button></li>
                   <li><button onClick={() => scrollToSection('process')} className="hover:text-brand transition-colors cursor-pointer">이용 절차</button></li>
                   <li><button onClick={() => scrollToSection('reviews')} className="hover:text-brand transition-colors cursor-pointer">고객 후기</button></li>
                   <li><a href="https://blog.naver.com/bucom_" target="_blank" rel="noopener noreferrer" className="hover:text-brand transition-colors">공식 블로그</a></li>
@@ -859,22 +949,38 @@ export default function App() {
         content={PRIVACY_POLICY} 
       />
 
-      {/* Floating Action Button */}
-      <motion.div 
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        className="fixed bottom-8 right-8 z-50"
-      >
-        <button 
-          onClick={() => setIsFormOpen(true)}
-          className="bg-brand text-white w-16 h-16 rounded-2xl shadow-3xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all group relative"
+      {/* Floating Action Buttons */}
+      <div className="fixed bottom-8 right-8 z-50 flex flex-col gap-4 items-end">
+        <motion.a 
+          href="http://pf.kakao.com/_nsgen/chat"
+          target="_blank"
+          rel="noopener noreferrer"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="bg-[#FEE500] text-[#191919] w-16 h-16 rounded-2xl shadow-3xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all group relative"
         >
-          <MessageSquare className="w-8 h-8" />
-          <span className="absolute right-full mr-4 bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-black whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-            수리 문의하기
+          <KakaoIcon className="w-8 h-8" />
+          <span className="absolute right-full mr-4 bg-[#FEE500] text-[#191919] px-4 py-2 rounded-xl text-xs font-black whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
+            카카오톡 실시간 상담
           </span>
-        </button>
-      </motion.div>
+        </motion.a>
+
+        <motion.div 
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+        >
+          <button 
+            onClick={() => setIsFormOpen(true)}
+            className="bg-brand text-white w-16 h-16 rounded-2xl shadow-3xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all group relative"
+          >
+            <MessageSquare className="w-8 h-8" />
+            <span className="absolute right-full mr-4 bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-black whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              수리 문의하기
+            </span>
+          </button>
+        </motion.div>
+      </div>
 
       {/* Customer Info Form Modal */}
       <AnimatePresence>
