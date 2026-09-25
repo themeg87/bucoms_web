@@ -1,22 +1,12 @@
 import express from "express";
 import path from "path";
 import dotenv from "dotenv";
-import fs from "fs";
 import { google } from "googleapis";
 
-// Try to load from .env first, then fallback to .env.example for convenience in this environment
 dotenv.config();
-if (fs.existsSync(".env.example")) {
-  const exampleConfig = dotenv.parse(fs.readFileSync(".env.example"));
-  for (const k in exampleConfig) {
-    if (!process.env[k]) {
-      process.env[k] = exampleConfig[k];
-    }
-  }
-}
 
 // Google Sheets Configuration
-const SPREADSHEET_ID = "1LV4pZL85q149xlQxctzL6eq6nw28XwRBWooSYFGEejA";
+const SPREADSHEET_ID = process.env.GOOGLE_SPREADSHEET_ID || "1LV4pZL85q149xlQxctzL6eq6nw28XwRBWooSYFGEejA";
 const SHEET_NAMES = ["고객문의", "Sheet1"]; // Try both Korean and English defaults
 
 async function appendToGoogleSheet(data: { name: string; phone: string; address: string; description: string }) {
@@ -30,8 +20,6 @@ async function appendToGoogleSheet(data: { name: string; phone: string; address:
     throw new Error(`환경 변수가 누락되었습니다: ${missing.join(", ")}`);
   }
 
-  console.log(`Attempting to append to sheet with email: ${email}`);
-  
   try {
     const auth = new google.auth.GoogleAuth({
       credentials: {
@@ -58,7 +46,8 @@ async function appendToGoogleSheet(data: { name: string; phone: string; address:
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
       range: `${targetSheet}!A:D`,
-      valueInputOption: "USER_ENTERED",
+      valueInputOption: "RAW", // 고객 입력이 수식(=...)으로 실행되지 않도록
+
       requestBody: {
         values: [[data.name, data.phone, data.address, data.description]],
       },
@@ -73,83 +62,100 @@ async function appendToGoogleSheet(data: { name: string; phone: string; address:
   }
 }
 
+async function sendTelegram(text: string) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!token || !chatId) {
+    throw new Error("환경 변수가 누락되었습니다: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID");
+  }
+
+  const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ chat_id: chatId, text }),
+  });
+  if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
+    throw new Error(result.description || `텔레그램 전송 실패 (${response.status})`);
+  }
+}
+
+// 같은 IP에서 짧은 시간에 반복 접수하는 스팸 차단 (인스턴스별 메모리 기준)
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const RATE_LIMIT_MAX = 5;
+const recentRequests = new Map<string, number[]>();
+
+function isRateLimited(ip: string) {
+  const now = Date.now();
+  const hits = (recentRequests.get(ip) || []).filter(t => now - t < RATE_LIMIT_WINDOW_MS);
+  hits.push(now);
+  recentRequests.set(ip, hits);
+  if (recentRequests.size > 1000) {
+    for (const [key, times] of recentRequests) {
+      if (times.every(t => now - t >= RATE_LIMIT_WINDOW_MS)) recentRequests.delete(key);
+    }
+  }
+  return hits.length > RATE_LIMIT_MAX;
+}
+
+function clean(value: unknown, maxLength: number) {
+  return typeof value === "string" ? value.trim().slice(0, maxLength) : "";
+}
+
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = Number(process.env.PORT) || 3000;
 
-  app.use(express.json());
+  app.set("trust proxy", 1);
+  app.use(express.json({ limit: "10kb" }));
 
   // Unified Inquiry API Endpoint
   app.post("/api/inquiry", async (req, res) => {
-    const { name, phone, address, description } = req.body;
-    
-    // Telegram Config
-    const token = process.env.TELEGRAM_BOT_TOKEN;
-    const chatId = process.env.TELEGRAM_CHAT_ID;
+    const body = req.body || {};
 
-    if (!token || !chatId) {
-      console.error("Telegram configuration missing");
-      return res.status(500).json({ success: false, message: "서버 설정 오류가 발생했습니다. (Telegram)" });
+    // 숨김 필드가 채워졌다면 봇으로 보고 조용히 무시
+    if (body.website) {
+      return res.json({ success: true, message: "문의 접수가 되었습니다." });
+    }
+
+    const name = clean(body.name, 30);
+    const phone = clean(body.phone, 20);
+    const address = clean(body.address, 200);
+    const description = clean(body.description, 1000);
+
+    if (!name || !address || !/^[0-9\-\s]{9,15}$/.test(phone)) {
+      return res.status(400).json({ success: false, message: "이름, 연락처, 주소를 정확히 입력해 주세요." });
+    }
+    if (body.consent !== true) {
+      return res.status(400).json({ success: false, message: "개인정보 수집·이용에 동의해 주세요." });
+    }
+
+    if (isRateLimited(req.ip || "unknown")) {
+      return res.status(429).json({ success: false, message: "잠시 후 다시 시도하시거나 전화로 문의해 주세요." });
     }
 
     const message = `
 [새로운 수리 요청]
 이름: ${name}
 연락처: ${phone}
-주소: ${address || "미입력"}
+주소: ${address}
 요청내용: ${description || "없음"}
     `.trim();
 
-    let telegramSuccess = false;
-    let sheetsSuccess = false;
-    let telegramError = null;
-    let sheetsError = null;
+    // 텔레그램 알림과 시트 기록은 서로 독립적으로 시도 (한쪽이 실패해도 다른 쪽은 진행)
+    const [telegramResult, sheetsResult] = await Promise.allSettled([
+      sendTelegram(message),
+      appendToGoogleSheet({ name, phone, address, description }),
+    ]);
 
-    try {
-      // 1. Send to Telegram
-      const telResponse = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: message,
-        }),
-      });
+    if (telegramResult.status === "rejected") console.error("Telegram Error:", telegramResult.reason?.message);
+    if (sheetsResult.status === "rejected") console.error("Sheets Error:", sheetsResult.reason?.message);
 
-      const telResult = await telResponse.json();
-      if (telResponse.ok) {
-        telegramSuccess = true;
-      } else {
-        telegramError = telResult.description || "텔레그램 전송 실패";
-      }
-
-      // 2. Append to Google Sheet
-      try {
-        await appendToGoogleSheet({ name, phone, address, description });
-        sheetsSuccess = true;
-      } catch (e: any) {
-        sheetsError = e.message;
-      }
-
-      if (telegramSuccess && sheetsSuccess) {
-        res.json({ success: true, message: "문의 접수가 되었습니다." });
-      } else if (telegramSuccess && !sheetsSuccess) {
-        res.json({ 
-          success: true, 
-          message: "문의 접수가 되었습니다.",
-          sheetsError: sheetsError 
-        });
-      } else {
-        res.status(400).json({ 
-          success: false, 
-          message: "접수 중 오류가 발생했습니다.",
-          telegramError,
-          sheetsError
-        });
-      }
-    } catch (error: any) {
-      console.error("Inquiry Error:", error);
-      res.status(500).json({ success: false, message: "서버 내부 오류가 발생했습니다.", error: error.message });
+    // 둘 중 하나라도 기록되면 접수된 것으로 처리 (상세 오류는 서버 로그에만 남김)
+    if (telegramResult.status === "fulfilled" || sheetsResult.status === "fulfilled") {
+      res.json({ success: true, message: "문의 접수가 되었습니다." });
+    } else {
+      res.status(502).json({ success: false, message: "접수 중 오류가 발생했습니다. 전화로 문의해 주세요." });
     }
   });
 

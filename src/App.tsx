@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Phone, 
   MapPin, 
@@ -20,7 +20,6 @@ import {
   Laptop,
   Database,
   Wifi,
-  Apple,
   Settings,
   Zap,
   Award,
@@ -34,6 +33,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { TERMS_OF_SERVICE, PRIVACY_POLICY } from './constants/legal';
+import { BUSINESS } from './constants/business';
 import Markdown from 'react-markdown';
 
 const SERVICES = [
@@ -41,57 +41,49 @@ const SERVICES = [
     icon: <Monitor className="w-6 h-6" />,
     title: "데스크탑 판매",
     description: "사무용부터 하이엔드 게이밍 PC까지, 용도에 맞는 최적의 데스크탑 판매 및 맞춤 상담.",
-    tags: ["사무용", "게이밍", "워크스테이션"],
-    image: "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&q=80&w=1200"
+    tags: ["사무용", "게이밍", "워크스테이션"]
   },
   {
     icon: <Cpu className="w-6 h-6" />,
     title: "조립",
     description: "부품 선정부터 깔끔한 선 정리까지, 전문가의 손길로 완성되는 고성능 커스텀 조립 PC.",
-    tags: ["커스텀PC", "선정리", "성능테스트"],
-    image: "https://images.unsplash.com/photo-1555617766-c94804975da3?auto=format&fit=crop&q=80&w=1200"
+    tags: ["커스텀PC", "선정리", "성능테스트"]
   },
   {
     icon: <ShieldCheck className="w-6 h-6" />,
     title: "AS대행/부품구매대행",
     description: "브랜드 PC 및 부품별 번거로운 AS 절차와 부품 구매를 부컴이 대신 빠르고 정확하게 처리해 드립니다.",
-    tags: ["삼성/LG", "델/HP", "부품구매"],
-    image: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=1200"
+    tags: ["삼성/LG", "델/HP", "부품구매"]
   },
   {
     icon: <Wrench className="w-6 h-6" />,
     title: "데스크탑 전문 수리",
     description: "부팅 불량, 전원 고장, 블루스크린 등 모든 데스크탑 하드웨어 및 소프트웨어 고장 수리.",
-    tags: ["메인보드", "그래픽카드", "파워교체"],
-    image: "https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&q=80&w=1200"
+    tags: ["메인보드", "그래픽카드", "파워교체"]
   },
   {
     icon: <Database className="w-6 h-6" />,
     title: "데이터 정밀 복구",
     description: "삭제된 파일, 포맷된 하드, 인식 불량 외장하드 등 소중한 데이터를 정밀 장비로 복원.",
-    tags: ["HDD/SSD", "USB", "NAS복구"],
-    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=1200"
+    tags: ["HDD/SSD", "USB", "NAS복구"]
   },
   {
     icon: <Settings className="w-6 h-6" />,
     title: "OS설치 및 최적화",
     description: "Windows 10/11 정품 설치, 드라이버 세팅 및 시스템 속도 향상을 위한 최적화 서비스.",
-    tags: ["윈도우설치", "드라이버", "속도개선"],
-    image: "https://images.unsplash.com/photo-1629654297299-c8506221ca97?auto=format&fit=crop&q=80&w=1200"
+    tags: ["윈도우설치", "드라이버", "속도개선"]
   },
   {
     icon: <Wifi className="w-6 h-6" />,
     title: "네트워크 및 NAS/CCTV 구축",
     description: "사무실 랜공사, NAS 데이터 서버 구축, CCTV 보안 시스템 설치 및 기업용 네트워크 최적화 서비스.",
-    tags: ["랜공사", "NAS설치", "CCTV설치", "기업보안"],
-    image: "https://images.unsplash.com/photo-1551703599-6b3e8379aa8c?auto=format&fit=crop&q=80&w=1200"
+    tags: ["랜공사", "NAS설치", "CCTV설치", "기업보안"]
   },
   {
     icon: <Laptop className="w-6 h-6" />,
     title: "노트북 수리",
     description: "액정 파손, 키보드 교체, 배터리 수명 문제 및 노트북 내부 청소/서멀 재도포 서비스.",
-    tags: ["액정교체", "배터리", "맥북수리"],
-    image: "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&q=80&w=1200"
+    tags: ["액정교체", "배터리", "맥북수리"]
   }
 ];
 
@@ -122,78 +114,91 @@ const STEPS = [
   }
 ];
 
-const STATUS_POOL = [
-  { area: "부산 해운대구", service: "맥북 프로 배터리 교체", time: "1시간 전" },
-  { area: "울산 남구", service: "윈도우 11 최적화 및 설치", time: "2시간 전" },
-  { area: "김해 삼계동", service: "게이밍 PC 블루스크린 수리", time: "3시간 전" },
-  { area: "양산 물금읍", service: "사무실 네트워크 공유 설정", time: "4시간 전" },
-  { area: "부산 부산진구", service: "외장하드 데이터 복구", time: "5시간 전" },
-  { area: "울산 중구", service: "노트북 액정 파손 수리", time: "6시간 전" },
-  { area: "김해 내동", service: "아이맥 부팅 불량 수리", time: "8시간 전" },
-  { area: "양산 덕계동", service: "조립 PC 견적 및 조립", time: "10시간 전" },
-  { area: "부산 동래구", service: "컴퓨터 전원 불량 수리", time: "12시간 전" },
-  { area: "울산 북구", service: "사무용 PC 업그레이드", time: "15시간 전" },
-  { area: "김해 장유동", service: "노트북 힌지 파손 수리", time: "18시간 전" },
-  { area: "양산 평산동", service: "랜섬웨어 감염 복구 상담", time: "21시간 전" },
-  { area: "부산 수영구", service: "CCTV 보안 시스템 점검", time: "1일 전" },
-  { area: "울산 동구", service: "기업용 NAS 서버 구축", time: "1일 전" },
-  { area: "김해 어방동", service: "조립 PC 선 정리 및 클리닝", time: "2일 전" },
-  { area: "양산 상북면", service: "포스기 연동 장애 해결", time: "2일 전" },
-  { area: "부산 사하구", service: "그래픽카드 서멀 재도포", time: "3일 전" },
-  { area: "울산 울주군", service: "무선 와이파이 증폭기 설치", time: "3일 전" },
-  { area: "김해 진영읍", service: "SSD 교체 및 데이터 마이그레이션", time: "4일 전" },
-  { area: "양산 하북면", service: "모니터 화면 무 증상 수리", time: "5일 전" }
+// 상단 띠에 흐르는 주요 작업 분야 (실제 접수 내역이 아닌 서비스 안내)
+const TICKER_ITEMS = [
+  "노트북 배터리·액정 교체",
+  "윈도우 11 설치 및 최적화",
+  "블루스크린·부팅 불량 수리",
+  "사무실 네트워크 구축",
+  "외장하드·SSD 데이터 복구",
+  "조립 PC 견적 및 조립",
+  "컴퓨터 전원 불량 수리",
+  "사무용 PC 업그레이드",
+  "랜섬웨어 감염 복구 상담",
+  "CCTV 설치 및 점검",
+  "기업용 NAS 서버 구축",
+  "포스기 연동 장애 해결",
+  "그래픽카드 서멀 재도포",
+  "무선 와이파이 증폭기 설치",
+  "SSD 교체 및 데이터 이전"
 ];
 
-const PARTNERS = [
-  { name: "SAMSUNG", domain: "samsung.com" },
-  { name: "LG", domain: "lg.com" },
-  { name: "APPLE", domain: "apple.com" },
-  { name: "MICROSOFT", domain: "microsoft.com" },
-  { name: "INTEL", domain: "intel.com" },
-  { name: "AMD", domain: "amd.com" },
-  { name: "NVIDIA", domain: "nvidia.com" },
-  { name: "ASUS", domain: "asus.com" },
-  { name: "MSI", domain: "msi.com" },
-  { name: "LENOVO", domain: "lenovo.com" },
-  { name: "DELL", domain: "dell.com" },
-  { name: "HP", domain: "hp.com" },
-  { name: "ACER", domain: "acer.com" },
-  { name: "GIGABYTE", domain: "gigabyte.com" },
-  { name: "RAZER", domain: "razer.com" },
-  { name: "LOGITECH", domain: "logitech.com" },
+// 수리·취급 가능 브랜드 (제휴 관계를 뜻하지 않음)
+const BRANDS = [
+  "SAMSUNG", "LG", "APPLE", "MICROSOFT", "INTEL", "AMD", "NVIDIA", "ASUS",
+  "MSI", "LENOVO", "DELL", "HP", "ACER", "GIGABYTE", "RAZER", "LOGITECH"
 ];
 
-const REVIEWS = [
-  { 
-    name: "부산 동래구 럭키아파트 김XX 고객님", 
-    content: "중요한 프로젝트 마감 직전에 서버가 멈춰서 정말 당황했는데, 부컴 기사님이 20분 만에 도착해서 메인보드 문제를 바로 해결해 주셨습니다. 전문성이 차원이 다릅니다." 
+// 블로그에 올린 실제 현장 사례 (사진: public/cases)
+const CASES = [
+  {
+    area: "부산 동래",
+    category: "전원 꺼짐 점검",
+    title: "한 번씩 꺼지던 컴퓨터, 원인은 메인보드",
+    story: "고객님은 램이나 그래픽카드를 의심하셨지만, 부품을 케이스 밖으로 꺼내 누드 테스트부터 전체 점검을 했습니다. MemTest86(램)과 3DMark(그래픽카드)는 모두 정상이었고, 메인보드 문제를 확인해 B760M 보드로 교체했습니다.",
+    tags: ["누드 테스트", "MemTest86", "3DMark", "메인보드 교체"],
+    image: "/cases/dongnae-board.jpg",
+    url: BUSINESS.blogUrl
   },
-  { 
-    name: "부산 연제구 거제동 카페XX 이XX 사장님", 
-    content: "포스기가 갑자기 안 돼서 영업에 차질이 생길 뻔했는데, 전화 한 통에 바로 달려와 주셨어요. 덕분에 점심 장사 무사히 마쳤습니다. 정말 감사합니다!" 
+  {
+    area: "부산 수영구",
+    category: "CCTV 설치",
+    title: "씨메르 필로티 주차장·엘리베이터 홀 CCTV",
+    story: "필로티 주차장·출입구, 분리수거장, 계단실까지 사람과 차가 드나드는 동선을 따라 카메라 위치를 잡았습니다. 배선은 통신 단자함과 계단실 벽을 따라 정리하고, 엘리베이터 홀에 분할 모니터를 달아 오가며 바로 확인할 수 있게 했습니다.",
+    tags: ["CCTV 설치", "배선 정리", "분할 모니터"],
+    image: "/cases/suyeong-cctv.jpg",
+    url: "https://blog.naver.com/bucom_/224416850340"
   },
-  { 
-    name: "부산 해운대구 센텀시티 IT회사 박XX 대리님", 
-    content: "사무실 PC 5대가 동시에 네트워크 오류가 나서 업무가 마비됐었는데, 부컴 기술진분들이 오셔서 체계적으로 원인 파악하고 한 시간 만에 복구해 주셨습니다. 역시 베테랑이시네요." 
+  {
+    area: "울산 남구",
+    category: "메인보드·그래픽카드 교체",
+    title: "장착 중 손상된 보드와 그래픽카드 교체",
+    story: "그래픽카드를 끼우다 슬롯이 크게 꺾이면서 보드와 그래픽카드가 함께 고장 났습니다. 새 제품이 단종돼 같은 모델 보드(X470 AORUS ULTRA GAMING)와 RTX 2060을 리퍼 부품으로 구해 교체하고, 드라이버 정리와 테스트까지 마친 뒤 출고했습니다.",
+    tags: ["출장 수거", "메인보드 교체", "RTX 2060", "드라이버 정리"],
+    image: "/cases/ulsan-gpu-board.jpg",
+    url: BUSINESS.blogUrl
   },
-  { 
-    name: "부산 금정구 구서동 롯데캐슬 최XX 고객님", 
-    content: "아이들 온라인 수업 중에 노트북이 꺼져서 급하게 불렀는데, 친절하게 설명해 주시고 먼지 청소까지 서비스로 해주셨어요. 믿고 맡길 수 있는 곳입니다." 
+  {
+    area: "해운대 센텀",
+    category: "출장 컴퓨터 청소",
+    title: "산 뒤로 한 번도 열지 않은 본체 청소",
+    story: "이사 후 컴퓨터 상태를 보고 놀라 블로그를 보고 연락 주신 고객님 댁으로 출장을 갔습니다. 팬과 쿨러를 떼어 하나씩 닦고, CPU 서멀구리스까지 새로 발랐습니다.",
+    tags: ["출장 청소", "팬·쿨러 분리", "서멀구리스 재도포"],
+    image: "/cases/centum-cleaning.jpg",
+    url: BUSINESS.blogUrl
   },
-  { 
-    name: "부산 수영구 광안동 식당XX 정XX 사장님", 
-    content: "CCTV 녹화기가 고장 나서 걱정했는데, 부품 교체 없이 간단한 세팅만으로 고쳐주셔서 수리비도 아끼고 정말 정직하게 장사하신다는 느낌을 받았습니다." 
+  {
+    area: "부산 영도구",
+    category: "NAS 설치",
+    title: "지역관리센터 시놀로지 NAS 설치",
+    story: "관급 계약으로 Synology DS925neo+와 시놀로지 정품 HAT3300 6TB 하드를 설치했습니다. 설치와 설정은 약 2시간 걸렸고, PC 탐색기에서 네트워크 드라이브로 바로 쓸 수 있게 연결했습니다.",
+    tags: ["DS925neo+", "HAT3300 6TB", "네트워크 드라이브"],
+    image: "/cases/yeongdo-nas.jpg",
+    url: BUSINESS.blogUrl
   },
-  { 
-    name: "부산 남구 대연동 디자인스튜디오 강XX 실장님", 
-    content: "맥북 침수 때문에 공식 센터 갔더니 수리비가 새로 사는 값 나오더라고요. 부컴에서 정밀 세척이랑 부품 수리 받고 지금 1년째 아무 문제 없이 잘 쓰고 있습니다." 
-  },
-  { 
-    name: "부산 부산진구 양정동 현대아파트 윤XX 고객님", 
-    content: "컴퓨터가 너무 느려져서 새로 사야 하나 고민했는데, 업그레이드 추천해 주신 대로 하니 새 컴퓨터처럼 빨라졌어요. 과잉 진단 없이 딱 필요한 것만 짚어주시네요." 
+  {
+    area: "부산",
+    category: "파워 교체",
+    title: "전원이 안 켜지던 PC, 파워 교체로 해결",
+    story: "전원이 안 켜진다는 연락을 받고 먼저 증상을 자세히 상담했습니다. 마이크로닉스 Classic II 600W 새 제품으로 파워를 교체하고, 그 자리에서 정상 작동을 확인했습니다.",
+    tags: ["전원 불량", "파워 교체", "600W 80PLUS BRONZE"],
+    image: "/cases/power-supply.jpg",
+    url: BUSINESS.blogUrl
   }
 ];
+
+// website: 봇 차단용 숨김 필드(사람은 비워 둠)
+const EMPTY_FORM = { name: "", phone: "", address: "", description: "", consent: false, website: "" };
 
 const LegalModal = ({ isOpen, onClose, title, content }: { isOpen: boolean, onClose: () => void, title: string, content: string }) => (
   <AnimatePresence>
@@ -253,64 +258,34 @@ const Logo = ({ size = "text-2xl", className = "" }: { size?: string, className?
   </div>
 );
 
-const StatusTicker = ({ scrolled }: { scrolled: boolean }) => {
-  const [shuffledStatus, setShuffledStatus] = useState([...STATUS_POOL]);
-
-  useEffect(() => {
-    setShuffledStatus([...STATUS_POOL].sort(() => Math.random() - 0.5));
-  }, []);
-
-  return (
-    <div className={`fixed left-0 w-full z-[50] transition-all duration-500 overflow-hidden border-b border-slate-100 bg-white/95 backdrop-blur-md ${scrolled ? 'top-[64px]' : 'top-[88px]'}`}>
-      <div className="flex items-center h-10">
-        <div className="bg-slate-900 text-white px-5 h-full flex items-center text-[10px] font-black uppercase tracking-widest shrink-0 z-10 shadow-[4px_0_24px_rgba(0,0,0,0.15)]">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse mr-2.5" />
-          실시간 접수 현황
-        </div>
-        <div className="flex gap-16 animate-marquee-left whitespace-nowrap items-center px-8">
-          {[...shuffledStatus, ...shuffledStatus, ...shuffledStatus].map((status, i) => (
-            <div key={i} className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-black text-slate-300 uppercase tracking-tighter">AREA</span>
-                <span className="text-[11px] font-bold text-slate-500">{status.area}</span>
-              </div>
-              <div className="w-px h-3 bg-slate-100" />
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-black text-slate-300 uppercase tracking-tighter">SERVICE</span>
-                <span className="text-[11px] font-extrabold text-slate-900">{status.service}</span>
-              </div>
-              <div className="w-px h-3 bg-slate-100" />
-              <span className="text-[10px] font-mono font-bold text-brand/60 uppercase">{status.time}</span>
-            </div>
-          ))}
-        </div>
+const ServiceTicker = ({ scrolled }: { scrolled: boolean }) => (
+  <div className={`fixed left-0 w-full z-[50] transition-all duration-500 overflow-hidden border-b border-slate-100 bg-white/95 backdrop-blur-md ${scrolled ? 'top-[64px]' : 'top-[88px]'}`}>
+    <div className="flex items-center h-10">
+      <div className="bg-slate-900 text-white px-5 h-full flex items-center text-[10px] font-black uppercase tracking-widest shrink-0 z-10 shadow-[4px_0_24px_rgba(0,0,0,0.15)]">
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-2.5" />
+        주요 출장 서비스
+      </div>
+      <div className="flex gap-16 animate-marquee-left whitespace-nowrap items-center px-8">
+        {[...TICKER_ITEMS, ...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
+          <div key={i} className="flex items-center gap-4">
+            <span className="text-[11px] font-extrabold text-slate-900">{item}</span>
+            <div className="w-px h-3 bg-slate-100" />
+            <span className="text-[11px] font-bold text-slate-500">{BUSINESS.serviceArea} 출장</span>
+          </div>
+        ))}
       </div>
     </div>
-  );
-};
+  </div>
+);
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [currentStatus, setCurrentStatus] = useState(STATUS_POOL.slice(0, 4));
-  const carouselRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
-    
-    // Live Status Update Logic
-    const interval = setInterval(() => {
-      setCurrentStatus(prev => {
-        const nextItem = STATUS_POOL[Math.floor(Math.random() * STATUS_POOL.length)];
-        return [nextItem, ...prev.slice(0, 3)];
-      });
-    }, 7000); // Update every 7 seconds
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      clearInterval(interval);
-    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const scrollToSection = (id: string) => {
@@ -324,7 +299,7 @@ export default function App() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isTermsOpen, setIsTermsOpen] = useState(false);
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
-  const [formData, setFormData] = useState({ name: "", phone: "", address: "", description: "" });
+  const [formData, setFormData] = useState(EMPTY_FORM);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -342,22 +317,19 @@ export default function App() {
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (response.ok) {
         setSubmitStatus("success");
         alert("문의 접수가 되었습니다.");
-        setFormData({ name: "", phone: "", address: "", description: "" });
+        setFormData(EMPTY_FORM);
         setTimeout(() => {
           setIsFormOpen(false);
           setSubmitStatus("idle");
         }, 2000);
       } else {
         setSubmitStatus("error");
-        setErrorMessage(data.message || "메시지 전송에 실패했습니다.");
-        if (data.sheetsError) {
-          alert(`구글 시트 오류: ${data.sheetsError}`);
-        }
+        setErrorMessage(data.message || "접수 중 오류가 발생했습니다. 전화로 문의해 주세요.");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -378,17 +350,17 @@ export default function App() {
           </div>
 
             <div className="hidden lg:flex items-center gap-10">
-            {['services', 'guarantee', 'process', 'reviews'].map((item) => (
+            {['services', 'guarantee', 'process', 'cases'].map((item) => (
               <button 
                 key={item}
                 onClick={() => scrollToSection(item)} 
                 className="text-sm font-semibold text-slate-500 hover:text-brand transition-colors tracking-wider whitespace-nowrap"
               >
-                {item === 'services' ? '서비스 안내' : item === 'guarantee' ? '비용 안내' : item === 'process' ? '이용 절차' : '고객 후기'}
+                {item === 'services' ? '서비스 안내' : item === 'guarantee' ? '비용 안내' : item === 'process' ? '이용 절차' : '시공 사례'}
               </button>
             ))}
             <a 
-              href="https://blog.naver.com/bucom_" 
+              href={BUSINESS.blogUrl} 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-sm font-semibold text-slate-500 hover:text-brand transition-colors tracking-wider whitespace-nowrap"
@@ -411,7 +383,7 @@ export default function App() {
         </div>
       </nav>
 
-      <StatusTicker scrolled={scrolled} />
+      <ServiceTicker scrolled={scrolled} />
 
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
@@ -451,7 +423,7 @@ export default function App() {
                     { id: 'services', label: '서비스 안내', icon: Zap },
                     { id: 'guarantee', label: '비용 안내', icon: Banknote },
                     { id: 'process', label: '이용 절차', icon: Clock },
-                    { id: 'reviews', label: '고객 후기', icon: Users },
+                    { id: 'cases', label: '시공 사례', icon: Users },
                   ].map((item) => (
                     <button 
                       key={item.id}
@@ -464,7 +436,7 @@ export default function App() {
                   ))}
                   
                   <a 
-                    href="https://blog.naver.com/bucom_" 
+                    href={BUSINESS.blogUrl} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="flex items-center gap-4 w-full text-lg font-bold text-slate-700 text-left py-4 px-4 rounded-2xl hover:bg-slate-50 active:bg-slate-100 transition-all"
@@ -493,7 +465,7 @@ export default function App() {
               {/* Menu Footer */}
               <div className="p-6 bg-slate-50 border-t border-slate-100 flex flex-col gap-3">
                 <a 
-                  href="http://pf.kakao.com/_nsgen/chat" 
+                  href={BUSINESS.kakaoUrl} 
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-[#FEE500] text-[#191919] py-4 rounded-2xl text-base font-black flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-transform"
@@ -512,7 +484,7 @@ export default function App() {
                   수리문의하기
                 </button>
                 <p className="text-center text-[10px] text-slate-400 mt-2 font-bold tracking-widest uppercase">
-                  24시간 긴급 수리 지원
+                  {BUSINESS.hours}
                 </p>
               </div>
             </motion.div>
@@ -534,21 +506,21 @@ export default function App() {
             >
               <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-brand/5 text-brand text-[10px] font-bold uppercase tracking-[0.2em] mb-8 border border-brand/10">
                 <span className="w-1.5 h-1.5 rounded-full bg-brand animate-pulse" />
-                National No.1 Service
+                {BUSINESS.serviceArea} 출장 전문
               </div>
               <h1 className="text-6xl md:text-8xl font-black text-slate-900 leading-[0.85] tracking-tighter mb-10 text-balance">
                 FAST REPAIR,<br />
                 <span className="text-brand italic font-serif font-bold">Perfect</span> RESULT.
               </h1>
               <p className="text-lg text-slate-500 mb-12 max-w-xl leading-relaxed font-medium">
-                부산·경남 지역 컴퓨터 출장 수리 전문 서비스 BUCOM.<br />
+                {BUSINESS.serviceArea} 컴퓨터 출장 수리 전문 서비스 BUCOM.<br />
                 지역 어디서나 신속한 방문 서비스, 10년 경력의 베테랑 엔지니어가 당신의 문제를 즉시 해결합니다.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-5">
                 <div className="flex flex-col gap-4 w-full sm:w-auto">
                   <a 
-                    href="http://pf.kakao.com/_nsgen/chat"
+                    href={BUSINESS.kakaoUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="bg-[#FEE500] text-[#191919] px-10 py-5 rounded-2xl text-lg font-black hover:bg-[#F7E600] transition-all flex items-center justify-center gap-3 shadow-xl active:scale-95"
@@ -556,22 +528,19 @@ export default function App() {
                     <KakaoIcon className="w-6 h-6" />
                     카카오톡 실시간 상담
                   </a>
-                  <a href="tel:010-2222-0170" className="group bg-brand text-white px-10 py-5 rounded-2xl text-lg font-black hover:bg-slate-900 transition-all flex items-center justify-center gap-3 shadow-2xl shadow-brand/20">
+                  <a href={`tel:${BUSINESS.phone}`} className="group bg-brand text-white px-10 py-5 rounded-2xl text-lg font-black hover:bg-slate-900 transition-all flex items-center justify-center gap-3 shadow-2xl shadow-brand/20">
                     <Phone className="w-6 h-6" />
                     상담 신청하기
                     <ArrowUpRight className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                   </a>
                 </div>
                 <div className="flex items-center gap-4 px-6 py-4 bg-slate-50 rounded-2xl border border-slate-100">
-                  <div className="flex -space-x-3">
-                    {[1,2,3,4].map(i => (
-                      <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-slate-200 overflow-hidden">
-                        <img src={`https://picsum.photos/seed/user${i}/100/100`} alt="User" referrerPolicy="no-referrer" />
-                      </div>
-                    ))}
+                  <div className="w-10 h-10 rounded-full bg-brand/10 text-brand flex items-center justify-center shrink-0">
+                    <Award className="w-5 h-5" />
                   </div>
                   <div className="text-sm font-bold text-slate-600">
-                    <span className="text-slate-900">50,000+</span> 고객 이용 중
+                    <span className="text-slate-900">10년 경력</span> 엔지니어 직접 방문<br />
+                    <span className="text-slate-400">출장비 10,000원 · 수리 시 면제</span>
                   </div>
                 </div>
               </div>
@@ -642,30 +611,14 @@ export default function App() {
       <div className="py-24 border-y border-slate-100 bg-slate-50/30">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-xs font-black uppercase tracking-[0.5em] text-slate-400 mb-3">공식 파트너 및 부품 지원</h2>
+            <h2 className="text-xs font-black uppercase tracking-[0.5em] text-slate-400 mb-3">수리·취급 가능 브랜드</h2>
             <div className="w-16 h-1 bg-brand mx-auto rounded-full opacity-30" />
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-8 items-center justify-items-center">
-            {PARTNERS.map(partner => (
-              <div key={partner.name} className="flex flex-col items-center gap-4 group w-full max-w-[100px]">
-                <div className="h-12 w-full flex items-center justify-center p-2 bg-white rounded-xl shadow-sm border border-slate-100 group-hover:shadow-md group-hover:border-brand/20 transition-all duration-500">
-                  <img 
-                    src={`https://logo.clearbit.com/${partner.domain}`} 
-                    alt={partner.name} 
-                    className="max-h-full max-w-full object-contain transition-all duration-500 group-hover:scale-110"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      if (!target.src.includes('google.com')) {
-                        target.src = `https://www.google.com/s2/favicons?domain=${partner.domain}&sz=128`;
-                      }
-                    }}
-                    referrerPolicy="no-referrer"
-                  />
-                </div>
-                <span className="text-[10px] font-black tracking-widest text-slate-400 group-hover:text-brand transition-colors uppercase text-center">
-                  {partner.name}
-                </span>
-              </div>
+          <div className="flex flex-wrap justify-center gap-3">
+            {BRANDS.map(brand => (
+              <span key={brand} className="px-5 py-3 bg-white rounded-xl shadow-sm border border-slate-100 text-xs font-black tracking-widest text-slate-500">
+                {brand}
+              </span>
             ))}
           </div>
         </div>
@@ -693,8 +646,8 @@ export default function App() {
               },
               {
                 icon: <History className="w-8 h-8" />,
-                title: "100% 책임 AS 보장",
-                desc: "수리 후 동일 증상 발생 시 100% 책임지고 다시 해결해 드리는 철저한 사후 관리를 보장합니다."
+                title: `${BUSINESS.warrantyDays}일 무상 A/S`,
+                desc: `수리 완료일로부터 ${BUSINESS.warrantyDays}일 이내 동일 부위에 같은 증상이 다시 생기면 무상으로 다시 수리해 드립니다.`
               }
             ].map((item, i) => (
               <motion.div 
@@ -725,11 +678,11 @@ export default function App() {
                 <CheckCircle2 className="w-6 h-6" />
               </div>
               <div>
-                <h5 className="text-lg font-bold text-slate-900">부산·경남 전 지역 출장비 10,000원</h5>
+                <h5 className="text-lg font-bold text-slate-900">{BUSINESS.serviceArea} 출장비 10,000원</h5>
                 <p className="text-sm text-slate-500 font-medium">수리 진행 시 출장비는 면제되어 더욱 합리적입니다.</p>
               </div>
             </div>
-            <a href="tel:010-2222-0170" className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-brand transition-colors shadow-xl">
+            <a href={`tel:${BUSINESS.phone}`} className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-brand transition-colors shadow-xl">
               지금 바로 상담하기
             </a>
           </motion.div>
@@ -785,9 +738,9 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-3 gap-16">
             {[
-              { label: "방문 수리 건수", value: "12,000+", icon: <Users /> },
               { label: "전문 엔지니어 경력", value: "10년+", icon: <Wrench /> },
-              { label: "고객 만족도", value: "99.8%", icon: <Star /> }
+              { label: "출장비 (수리 시 면제)", value: "10,000원", icon: <Banknote /> },
+              { label: "무상 A/S 기간", value: `${BUSINESS.warrantyDays}일`, icon: <ShieldCheck /> }
             ].map((stat, i) => (
               <div key={i} className="text-center group">
                 <div className="inline-flex p-4 bg-slate-50 rounded-2xl text-brand mb-8 group-hover:bg-brand group-hover:text-white transition-all duration-500">
@@ -801,54 +754,66 @@ export default function App() {
         </div>
       </section>
 
-      {/* Reviews Section - Draggable Carousel */}
-      <section id="reviews" className="py-40 bg-slate-50 overflow-hidden">
+      {/* Cases Section - 블로그 실제 현장 사례 */}
+      <section id="cases" className="py-40 bg-slate-50 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-24 gap-8">
             <div className="max-w-xl">
-              <h2 className="text-xs font-bold text-brand tracking-[0.4em] uppercase mb-6">고객 이용 후기</h2>
-              <h3 className="text-5xl md:text-7xl font-black text-slate-900 leading-[0.9]">고객이 증명하는<br /><span className="text-slate-300">압도적 실력.</span></h3>
+              <h2 className="text-xs font-bold text-brand tracking-[0.4em] uppercase mb-6">현장 시공 사례</h2>
+              <h3 className="text-5xl md:text-7xl font-black text-slate-900 leading-[0.9]">직접 다녀온<br /><span className="text-slate-300">현장 이야기.</span></h3>
             </div>
-            <div className="flex flex-col items-end gap-4">
-              <div className="flex items-center gap-4">
-                <div className="flex text-yellow-400">
-                  {[1,2,3,4,5].map(i => <Star key={i} className="w-6 h-6 fill-current" />)}
-                </div>
-                <span className="text-2xl font-black text-slate-900">4.9 / 5.0</span>
-              </div>
-              <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">12,000건 이상의 실제 후기 기반</p>
-            </div>
+            <a
+              href={BUSINESS.blogUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-4 bg-white rounded-2xl border border-slate-100 text-sm font-bold text-slate-700 hover:text-brand hover:border-brand/20 transition-colors"
+            >
+              블로그에서 사례 더 보기
+              <ArrowUpRight className="w-4 h-4" />
+            </a>
           </div>
-        </div>
 
-        {/* Infinite Auto-Scrolling Carousel */}
-        <div className="relative overflow-hidden py-10">
-          <div className="flex gap-8 w-max animate-marquee-left">
-            {/* Triple the reviews for absolute seamlessness on all screen sizes */}
-            {[...REVIEWS, ...REVIEWS, ...REVIEWS].map((review, i) => (
-              <div 
-                key={i}
-                className="w-[350px] md:w-[500px] shrink-0"
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {CASES.map((item, i) => (
+              <motion.a
+                key={item.title}
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: (i % 3) * 0.1 }}
+                className="group bg-white rounded-[2rem] border border-slate-100 overflow-hidden flex flex-col hover:border-brand/20 hover:shadow-xl transition-all duration-500"
               >
-                <div className="bg-white p-12 md:p-16 rounded-[3rem] border border-slate-100 flex flex-col justify-between h-full group hover:border-brand/20 transition-all duration-700 shadow-xl shadow-slate-200/20 select-none">
-                  <p className="text-xl md:text-2xl font-serif italic text-slate-800 leading-relaxed mb-12">"{review.content}"</p>
-                  <div className="flex items-center gap-6">
-                    <div className="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center font-bold text-slate-400 group-hover:bg-brand group-hover:text-white transition-all duration-500">
-                      {review.name.split(' ').pop()?.[0] || '고'}
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="font-bold text-slate-900">{review.name}</span>
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">인증된 고객</span>
-                    </div>
+                <div className="aspect-[4/3] overflow-hidden bg-slate-100">
+                  <img
+                    src={item.image}
+                    alt={`${item.area} ${item.category} 현장 사진`}
+                    loading="lazy"
+                    width={800}
+                    height={600}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                </div>
+                <div className="p-8 flex flex-col flex-1">
+                  <div className="flex items-center gap-2 text-xs font-bold text-brand mb-3">
+                    <MapPin className="w-3.5 h-3.5" />
+                    {item.area} · {item.category}
+                  </div>
+                  <h4 className="text-xl font-bold text-slate-900 mb-3 tracking-tight">{item.title}</h4>
+                  <p className="text-slate-500 text-sm leading-relaxed font-medium mb-6">{item.story}</p>
+                  <div className="mt-auto flex flex-wrap gap-1.5">
+                    {item.tags.map(tag => (
+                      <span key={tag} className="text-[11px] font-bold px-2 py-1 bg-slate-50 text-slate-500 rounded">
+                        {tag}
+                      </span>
+                    ))}
                   </div>
                 </div>
-              </div>
+              </motion.a>
             ))}
           </div>
-          
-          {/* Gradient Overlays for smooth edges */}
-          <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none" />
-          <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-slate-50 to-transparent z-10 pointer-events-none" />
         </div>
       </section>
 
@@ -864,10 +829,10 @@ export default function App() {
             </h2>
           </div>
           <div className="flex flex-col gap-8">
-            <a href="tel:010-2222-0170" className="group bg-brand text-white px-12 py-8 rounded-[2rem] text-3xl font-black hover:bg-white hover:text-brand transition-all flex items-center justify-between shadow-2xl">
+            <a href={`tel:${BUSINESS.phone}`} className="group bg-brand text-white px-12 py-8 rounded-[2rem] text-3xl font-black hover:bg-white hover:text-brand transition-all flex items-center justify-between shadow-2xl">
               <div className="flex items-center gap-6">
                 <Phone className="w-10 h-10" />
-                010-2222-0170
+                {BUSINESS.phone}
               </div>
               <ArrowUpRight className="w-10 h-10 group-hover:translate-x-2 group-hover:-translate-y-2 transition-transform" />
             </a>
@@ -878,7 +843,7 @@ export default function App() {
               <span>온라인 예약 상담하기</span>
               <ChevronRight className="w-6 h-6" />
             </button>
-            <p className="text-white/30 font-mono text-[10px] uppercase tracking-[0.3em]">긴급 출장 지원 대응 시간: 30분 이내</p>
+            <p className="text-white/30 font-mono text-[10px] uppercase tracking-[0.3em]">{BUSINESS.serviceArea} 신속 출장 · {BUSINESS.hours}</p>
           </div>
         </div>
       </section>
@@ -902,8 +867,8 @@ export default function App() {
                   <li><button onClick={() => scrollToSection('services')} className="hover:text-brand transition-colors cursor-pointer">서비스 안내</button></li>
                   <li><button onClick={() => scrollToSection('guarantee')} className="hover:text-brand transition-colors cursor-pointer">비용 안내</button></li>
                   <li><button onClick={() => scrollToSection('process')} className="hover:text-brand transition-colors cursor-pointer">이용 절차</button></li>
-                  <li><button onClick={() => scrollToSection('reviews')} className="hover:text-brand transition-colors cursor-pointer">고객 후기</button></li>
-                  <li><a href="https://blog.naver.com/bucom_" target="_blank" rel="noopener noreferrer" className="hover:text-brand transition-colors">공식 블로그</a></li>
+                  <li><button onClick={() => scrollToSection('cases')} className="hover:text-brand transition-colors cursor-pointer">시공 사례</button></li>
+                  <li><a href={BUSINESS.blogUrl} target="_blank" rel="noopener noreferrer" className="hover:text-brand transition-colors">공식 블로그</a></li>
                   <li><button onClick={() => setIsTermsOpen(true)} className="hover:text-brand transition-colors cursor-pointer">이용약관</button></li>
                   <li><button onClick={() => setIsPrivacyOpen(true)} className="hover:text-brand transition-colors cursor-pointer">개인정보처리방침</button></li>
                 </ul>
@@ -914,15 +879,15 @@ export default function App() {
                 <ul className="space-y-6 text-sm font-bold text-slate-500">
                   <li className="flex items-start gap-4">
                     <MapPin className="w-5 h-5 text-brand shrink-0" />
-                    <span>부산·울산·김해·양산 전지역 출장 가능</span>
+                    <span>{BUSINESS.serviceArea} 전지역 출장 가능</span>
                   </li>
                   <li className="flex items-center gap-4">
                     <Phone className="w-5 h-5 text-brand shrink-0" />
-                    <span>010-2222-0170 (24시간 긴급 문의 접수)</span>
+                    <span>{BUSINESS.phone}</span>
                   </li>
                   <li className="flex items-center gap-4">
                     <Clock className="w-5 h-5 text-brand shrink-0" />
-                    <span>연중무휴 09:00 - 22:00 (야간 상담 가능)</span>
+                    <span>{BUSINESS.hours}</span>
                   </li>
                 </ul>
               </div>
@@ -930,6 +895,16 @@ export default function App() {
           </div>
           
           <div className="pt-12 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">
+            <p className="normal-case tracking-normal text-[11px] leading-relaxed text-center md:text-left">
+              {[
+                `상호: ${BUSINESS.name}`,
+                BUSINESS.owner && `대표: ${BUSINESS.owner}`,
+                BUSINESS.bizNumber && `사업자등록번호: ${BUSINESS.bizNumber}`,
+                BUSINESS.address && `주소: ${BUSINESS.address}`,
+                `전화: ${BUSINESS.phone}`,
+                BUSINESS.email && `이메일: ${BUSINESS.email}`,
+              ].filter(Boolean).join(' | ')}
+            </p>
             <p>© 2026 BUCOM COMPUTER SERVICE. ALL RIGHTS RESERVED.</p>
           </div>
         </div>
@@ -952,7 +927,7 @@ export default function App() {
       {/* Floating Action Buttons */}
       <div className="fixed bottom-8 right-8 z-50 flex flex-col gap-4 items-end">
         <motion.a 
-          href="http://pf.kakao.com/_nsgen/chat"
+          href={BUSINESS.kakaoUrl}
           target="_blank"
           rel="noopener noreferrer"
           initial={{ scale: 0, opacity: 0 }}
@@ -997,7 +972,7 @@ export default function App() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden"
+              className="bg-white w-full max-w-md max-h-[90vh] overflow-y-auto rounded-[2.5rem] shadow-2xl relative z-10"
             >
               <div className="p-10">
                 <div className="flex justify-between items-start mb-8">
@@ -1019,6 +994,7 @@ export default function App() {
                     <input 
                       required
                       type="text"
+                      maxLength={30}
                       placeholder="성함을 입력해주세요"
                       className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 text-slate-900 placeholder:text-slate-300 focus:ring-2 focus:ring-brand transition-all outline-none"
                       value={formData.name}
@@ -1030,6 +1006,9 @@ export default function App() {
                     <input 
                       required
                       type="tel"
+                      inputMode="tel"
+                      pattern="[0-9\-\s]{9,15}"
+                      title="숫자와 - 만 입력해 주세요"
                       placeholder="010-0000-0000"
                       className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 text-slate-900 placeholder:text-slate-300 focus:ring-2 focus:ring-brand transition-all outline-none"
                       value={formData.phone}
@@ -1041,6 +1020,7 @@ export default function App() {
                     <input 
                       required
                       type="text"
+                      maxLength={200}
                       placeholder="수리를 받을 주소를 입력해 주세요"
                       className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 text-slate-900 placeholder:text-slate-300 focus:ring-2 focus:ring-brand transition-all outline-none"
                       value={formData.address}
@@ -1051,11 +1031,44 @@ export default function App() {
                     <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">증상 및 요청사항</label>
                     <textarea 
                       rows={3}
+                      maxLength={1000}
                       placeholder="수리가 필요한 증상을 간단히 적어주세요"
                       className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 text-slate-900 placeholder:text-slate-300 focus:ring-2 focus:ring-brand transition-all outline-none resize-none"
                       value={formData.description}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     />
+                  </div>
+
+                  {/* 봇 차단용 숨김 필드 */}
+                  <input
+                    type="text"
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                    className="hidden"
+                    value={formData.website}
+                    onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                  />
+
+                  <div className="rounded-2xl bg-slate-50 px-5 py-4 text-xs text-slate-500 leading-relaxed">
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <input
+                        required
+                        type="checkbox"
+                        className="mt-0.5 w-4 h-4 accent-brand shrink-0"
+                        checked={formData.consent}
+                        onChange={(e) => setFormData({ ...formData, consent: e.target.checked })}
+                      />
+                      <span>
+                        <b className="text-slate-700">[필수] 개인정보 수집·이용 및 국외 이전에 동의합니다.</b><br />
+                        수집 항목: 이름, 연락처, 주소, 요청 내용 / 목적: 출장 수리 상담 및 방문 / 보유 기간: 상담 완료 후 파기(법령상 보존 기록 제외).
+                        문의 내용은 접수 관리를 위해 Google Sheets(미국)·Telegram으로 전송됩니다. 동의하지 않으시면 전화 또는 카카오톡으로 상담하실 수 있습니다.{' '}
+                        <button type="button" onClick={() => setIsPrivacyOpen(true)} className="underline text-brand font-bold">
+                          전문 보기
+                        </button>
+                      </span>
+                    </label>
                   </div>
 
                   <button 
