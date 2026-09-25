@@ -146,9 +146,9 @@ const CCTV_POINTS = [
   { icon: <MonitorPlay className="w-5 h-5" />, title: "녹화기·모니터 세팅까지", desc: "녹화기 연결부터 분할 모니터 거치까지, 설치 당일 바로 화면을 확인할 수 있게 해 드립니다." }
 ];
 const CCTV_PHOTOS = [
-  { src: "/cctv/cabinet.jpg", caption: "단자함 내부 배선 정리" },
+  { src: "/cctv/survey.jpg", caption: "시공 전 현장 실측" },
   { src: "/cctv/dome-camera.jpg", caption: "필로티 천장 돔 카메라" },
-  { src: "/cctv/nvr.jpg", caption: "녹화기(NVR) 연결" },
+  { src: "/cctv/cabinet.jpg", caption: "단자함 내부 배선 정리" },
   { src: "/cctv/monitor.jpg", caption: "엘리베이터 홀 분할 모니터" }
 ];
 const CCTV_PLACES = ["빌라·공동주택", "상가·매장", "사무실", "주차장", "공장·창고"];
@@ -906,7 +906,7 @@ export default function App() {
                 <div className="inline-flex p-4 bg-slate-50 rounded-2xl text-brand mb-8 group-hover:bg-brand group-hover:text-white transition-all duration-500">
                   {stat.icon}
                 </div>
-                <div className="text-6xl font-bold text-slate-900 mb-3 tracking-tighter font-serif italic">{stat.value}</div>
+                <div className="text-6xl font-black text-slate-900 mb-3 tracking-tighter">{stat.value}</div>
                 <div className="text-xs font-bold text-slate-400 uppercase tracking-[0.3em]">{stat.label}</div>
               </div>
             ))}
@@ -984,7 +984,7 @@ export default function App() {
             <div className="text-brand text-xs font-bold uppercase tracking-[0.4em] mb-8">정직한 기술, 확실한 해결</div>
             <h2 className="text-6xl md:text-8xl font-black text-white mb-12 tracking-tighter leading-[0.85]">
               당신의<br /> 소중한 일상,<br />
-              <span className="text-brand italic font-serif font-bold">다시 완벽하게</span><br />
+              <span className="text-brand">다시 완벽하게</span><br />
               시작하세요.
             </h2>
           </div>
