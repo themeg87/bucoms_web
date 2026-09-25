@@ -126,9 +126,6 @@ async function startServer() {
     if (!name || !address || !/^[0-9\-\s]{9,15}$/.test(phone)) {
       return res.status(400).json({ success: false, message: "이름, 연락처, 주소를 정확히 입력해 주세요." });
     }
-    if (body.consent !== true) {
-      return res.status(400).json({ success: false, message: "개인정보 수집·이용에 동의해 주세요." });
-    }
 
     if (isRateLimited(req.ip || "unknown")) {
       return res.status(429).json({ success: false, message: "잠시 후 다시 시도하시거나 전화로 문의해 주세요." });

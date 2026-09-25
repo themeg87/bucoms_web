@@ -198,7 +198,7 @@ const CASES = [
 ];
 
 // website: 봇 차단용 숨김 필드(사람은 비워 둠)
-const EMPTY_FORM = { name: "", phone: "", address: "", description: "", consent: false, website: "" };
+const EMPTY_FORM = { name: "", phone: "", address: "", description: "", website: "" };
 
 const LegalModal = ({ isOpen, onClose, title, content }: { isOpen: boolean, onClose: () => void, title: string, content: string }) => (
   <AnimatePresence>
@@ -1050,26 +1050,6 @@ export default function App() {
                     value={formData.website}
                     onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                   />
-
-                  <div className="rounded-2xl bg-slate-50 px-5 py-4 text-xs text-slate-500 leading-relaxed">
-                    <label className="flex items-start gap-3 cursor-pointer">
-                      <input
-                        required
-                        type="checkbox"
-                        className="mt-0.5 w-4 h-4 accent-brand shrink-0"
-                        checked={formData.consent}
-                        onChange={(e) => setFormData({ ...formData, consent: e.target.checked })}
-                      />
-                      <span>
-                        <b className="text-slate-700">[필수] 개인정보 수집·이용 및 국외 이전에 동의합니다.</b><br />
-                        수집 항목: 이름, 연락처, 주소, 요청 내용 / 목적: 출장 수리 상담 및 방문 / 보유 기간: 상담 완료 후 파기(법령상 보존 기록 제외).
-                        문의 내용은 접수 관리를 위해 Google Sheets(미국)·Telegram으로 전송됩니다. 동의하지 않으시면 전화 또는 카카오톡으로 상담하실 수 있습니다.{' '}
-                        <button type="button" onClick={() => setIsPrivacyOpen(true)} className="underline text-brand font-bold">
-                          전문 보기
-                        </button>
-                      </span>
-                    </label>
-                  </div>
 
                   <button 
                     disabled={isSubmitting}
