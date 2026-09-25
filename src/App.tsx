@@ -606,13 +606,16 @@ export default function App() {
             >
               <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden shadow-3xl group">
                 <img 
-                  src="/hero-onsite.jpg"
-                  alt="부컴 엔지니어가 현장에서 배선 작업을 하는 모습"
+                  src="/hero-pc.jpg"
+                  alt="부컴이 파워를 교체한 뒤 정상 작동하는 고객 PC"
                   width={800}
                   height={1000}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   referrerPolicy="no-referrer"
                 />
+                <div className="absolute left-4 bottom-4 px-4 py-2 rounded-xl bg-slate-900/80 text-white text-xs font-bold backdrop-blur">
+                  실제 수리 현장 · 파워 교체 후 정상 작동
+                </div>
               </div>
             </motion.div>
           </div>
