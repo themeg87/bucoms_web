@@ -72,4 +72,4 @@ git push "https://themeg87:<토큰>@github.com/themeg87/bucoms_web.git" main   #
 - 01:52 `0b28392` 검색 설명 80자 이내(네이버 SEO 경고 해결), 빌드 검사 추가. 사장님이 Vercel 에서 bucoms.com → www 를 308 로 변경(확인함).
 - 2026-09-26 블로그 쪽(저장소 밖): `blog_computer/tools/template/homepage.py`(주제별 홈페이지 링크·서명 WEB 줄), `check_post.py` [홈페이지] 경고, `blog_computer/CLAUDE.md`·스킬 post_format.md 규칙, `bucom_brand/brand.json` contact.website.
 - 2026-09-26 작업 기록 체계: 이 WORKLOG.md + 프로젝트 CLAUDE.md(자동 로드) + Stop 훅(기록 누락 시 갱신 요구).
-- 2026-09-26 02:50 (커밋 아래) 네이버 블로그 글 구글 색인 돕기: `/blog/` 전체 글 목록 페이지(488개 링크, sitemap 포함), 푸터·관련 글 섹션에서 `/blog/` 링크, 사례 페이지 원본 글 자동 연결(`CASE_POSTS`).
+- 2026-09-26 02:50 `4d78146` 네이버 블로그 글 구글 색인 돕기: `/blog/` 전체 글 목록 페이지(488개 링크, sitemap 포함), 푸터·관련 글 섹션에서 `/blog/` 링크, 사례 페이지 원본 글 자동 연결(`CASE_POSTS`).
