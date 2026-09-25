@@ -39,6 +39,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { TERMS_OF_SERVICE, PRIVACY_POLICY } from './constants/legal';
 import { BUSINESS } from './constants/business';
+import { track } from './analytics';
 import Markdown from 'react-markdown';
 
 const SERVICES = [
@@ -240,6 +241,7 @@ const LegalModal = ({ isOpen, onClose, title, content }: { isOpen: boolean, onCl
           <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
             <h3 className="text-xl font-bold text-slate-900">{title}</h3>
             <button 
+              aria-label="닫기"
               onClick={onClose}
               className="p-2 hover:bg-slate-100 rounded-full transition-colors"
             >
@@ -281,7 +283,7 @@ const Logo = ({ size = "text-2xl", className = "" }: { size?: string, className?
 const ServiceTicker = ({ scrolled }: { scrolled: boolean }) => (
   <div className={`fixed left-0 w-full z-[50] transition-all duration-500 overflow-hidden border-b border-slate-100 bg-white/95 backdrop-blur-md ${scrolled ? 'top-[64px]' : 'top-[88px]'}`}>
     <div className="flex items-center h-10">
-      <div className="bg-slate-900 text-white px-5 h-full flex items-center text-[10px] font-black uppercase tracking-widest shrink-0 z-10 shadow-[4px_0_24px_rgba(0,0,0,0.15)]">
+      <div className="bg-slate-900 text-white px-5 h-full flex items-center text-xs font-black uppercase tracking-widest shrink-0 z-10 shadow-[4px_0_24px_rgba(0,0,0,0.15)]">
         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-2.5" />
         주요 출장 서비스
       </div>
@@ -324,6 +326,23 @@ export default function App() {
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
+  // ESC 키로 열린 창(문의·약관·메뉴) 닫기
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      setIsFormOpen(false);
+      setIsTermsOpen(false);
+      setIsPrivacyOpen(false);
+      setIsMenuOpen(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
+
+  useEffect(() => {
+    if (isFormOpen) track('open_inquiry_form');
+  }, [isFormOpen]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -341,6 +360,7 @@ export default function App() {
 
       if (response.ok) {
         setSubmitStatus("success");
+        track('submit_inquiry');
         alert("문의 접수가 되었습니다.");
         setFormData(EMPTY_FORM);
         setTimeout(() => {
@@ -398,12 +418,12 @@ export default function App() {
               className="bg-slate-900 text-white px-6 py-3 rounded-full text-sm font-bold hover:bg-brand transition-all flex items-center gap-2 shadow-xl shadow-slate-900/10 active:scale-95 cursor-pointer whitespace-nowrap"
             >
               <MessageSquare className="w-4 h-4" />
-              긴급 문의
+              수리 문의
             </button>
           </div>
 
           {/* Mobile Menu Toggle */}
-          <button className="lg:hidden p-2 text-slate-900" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          <button className="lg:hidden p-2 text-slate-900" aria-label={isMenuOpen ? "메뉴 닫기" : "메뉴 열기"} aria-expanded={isMenuOpen} onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <X /> : <Menu />}
           </button>
         </div>
@@ -435,6 +455,7 @@ export default function App() {
               <div className="p-6 border-b border-slate-50 flex items-center justify-between">
                 <Logo size="text-xl" />
                 <button 
+                  aria-label="닫기"
                   onClick={() => setIsMenuOpen(false)}
                   className="p-2 hover:bg-slate-50 rounded-full transition-colors"
                 >
@@ -510,7 +531,7 @@ export default function App() {
                   <MessageSquare className="w-5 h-5" />
                   수리문의하기
                 </button>
-                <p className="text-center text-[10px] text-slate-400 mt-2 font-bold tracking-widest uppercase">
+                <p className="text-center text-xs text-slate-400 mt-2 font-bold tracking-widest uppercase">
                   {BUSINESS.hours}
                 </p>
               </div>
@@ -532,7 +553,7 @@ export default function App() {
               transition={{ duration: 0.8, ease: "easeOut" }}
               className="lg:col-span-7"
             >
-              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-brand/5 text-brand text-[10px] font-bold uppercase tracking-[0.2em] mb-8 border border-brand/10">
+              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-brand/5 text-brand text-xs font-bold uppercase tracking-[0.2em] mb-8 border border-brand/10">
                 <span className="w-1.5 h-1.5 rounded-full bg-brand animate-pulse" />
                 {BUSINESS.serviceArea} 출장 전문
               </div>
@@ -561,7 +582,7 @@ export default function App() {
                   </a>
                   <a href={`tel:${BUSINESS.phone}`} className="group bg-brand text-white px-10 py-5 rounded-2xl text-lg font-black hover:bg-slate-900 transition-all flex items-center justify-center gap-3 shadow-2xl shadow-brand/20">
                     <Phone className="w-6 h-6" />
-                    상담 신청하기
+                    전화 상담하기
                     <ArrowUpRight className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                   </a>
                 </div>
@@ -628,7 +649,7 @@ export default function App() {
                   <p className="text-slate-500 text-sm mb-8 leading-relaxed font-medium">{service.description}</p>
                   <div className="flex flex-wrap gap-1.5">
                     {service.tags.map(tag => (
-                      <span key={tag} className="text-[9px] font-bold px-2 py-1 bg-slate-50 text-slate-400 rounded uppercase tracking-wider">
+                      <span key={tag} className="text-[11px] font-bold px-2 py-1 bg-slate-50 text-slate-400 rounded uppercase tracking-wider">
                         {tag}
                       </span>
                     ))}
@@ -1003,7 +1024,7 @@ export default function App() {
               <span>온라인 예약 상담하기</span>
               <ChevronRight className="w-6 h-6" />
             </button>
-            <p className="text-white/30 font-mono text-[10px] uppercase tracking-[0.3em]">{BUSINESS.serviceArea} 신속 출장 · {BUSINESS.hours}</p>
+            <p className="text-white/30 font-mono text-xs uppercase tracking-[0.3em]">{BUSINESS.serviceArea} 신속 출장 · {BUSINESS.hours}</p>
           </div>
         </div>
       </section>
@@ -1055,7 +1076,7 @@ export default function App() {
             </div>
           </div>
           
-          <div className="pt-12 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">
+          <div className="pt-12 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">
             <p className="normal-case tracking-normal text-[11px] leading-relaxed text-center md:text-left">
               {[
                 `상호: ${BUSINESS.name}`,
@@ -1094,6 +1115,7 @@ export default function App() {
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.2 }}
+          aria-label="카카오톡 실시간 상담"
           className="bg-[#FEE500] text-[#191919] w-16 h-16 rounded-2xl shadow-3xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all group relative"
         >
           <KakaoIcon className="w-8 h-8" />
@@ -1108,6 +1130,7 @@ export default function App() {
         >
           <button 
             onClick={() => setIsFormOpen(true)}
+            aria-label="수리 문의하기"
             className="bg-brand text-white w-16 h-16 rounded-2xl shadow-3xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all group relative"
           >
             <MessageSquare className="w-8 h-8" />
@@ -1142,6 +1165,7 @@ export default function App() {
                     <p className="text-slate-500 text-sm font-medium">정보를 입력하시면 담당자가 즉시 연락드립니다.</p>
                   </div>
                   <button 
+                    aria-label="닫기"
                     onClick={() => setIsFormOpen(false)}
                     className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
                   >
@@ -1151,19 +1175,20 @@ export default function App() {
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">이름</label>
+                    <label htmlFor="inquiry-name" className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">이름</label>
                     <input 
                       required
                       type="text"
                       maxLength={30}
                       placeholder="성함을 입력해주세요"
                       className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 text-slate-900 placeholder:text-slate-300 focus:ring-2 focus:ring-brand transition-all outline-none"
+                      id="inquiry-name"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">연락처</label>
+                    <label htmlFor="inquiry-phone" className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">연락처</label>
                     <input 
                       required
                       type="tel"
@@ -1172,29 +1197,32 @@ export default function App() {
                       title="숫자와 - 만 입력해 주세요"
                       placeholder="010-0000-0000"
                       className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 text-slate-900 placeholder:text-slate-300 focus:ring-2 focus:ring-brand transition-all outline-none"
+                      id="inquiry-phone"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">주소</label>
+                    <label htmlFor="inquiry-address" className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">주소</label>
                     <input 
                       required
                       type="text"
                       maxLength={200}
                       placeholder="수리를 받을 주소를 입력해 주세요"
                       className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 text-slate-900 placeholder:text-slate-300 focus:ring-2 focus:ring-brand transition-all outline-none"
+                      id="inquiry-address"
                       value={formData.address}
                       onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">증상 및 요청사항</label>
+                    <label htmlFor="inquiry-description" className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">증상 및 요청사항</label>
                     <textarea 
                       rows={3}
                       maxLength={1000}
                       placeholder="수리가 필요한 증상을 간단히 적어주세요"
                       className="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 text-slate-900 placeholder:text-slate-300 focus:ring-2 focus:ring-brand transition-all outline-none resize-none"
+                      id="inquiry-description"
                       value={formData.description}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     />
