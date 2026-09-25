@@ -54,7 +54,8 @@ git push "https://themeg87:<토큰>@github.com/themeg87/bucoms_web.git" main   #
 - [ ] 사장님: 구글 비즈니스 프로필 등록 → 이후 리뷰 요청 QR 카드 제작
 - [ ] 사장님: 네이버 스마트플레이스 홈페이지 칸에 https://www.bucoms.com
 - [ ] 사장님: GitHub 토큰 폐기, 저장소 Private 전환 (작업이 한동안 없을 때)
-- [ ] **배포 대기**: `/blog/` 전체 글 목록 커밋 — push(토큰 필요) 후 서치콘솔에서 `/blog/` 색인 요청
+- [ ] 사장님: 서치콘솔 URL 검사 → `https://www.bucoms.com/blog/` 색인 생성 요청 (배포·실서버 확인 완료)
+- [ ] 사장님: 대화에 붙여 넣은 GitHub 토큰은 작업 끝나면 폐기
 - [ ] 사례 원본 글 연결: 현재 수영 CCTV 1/6만. 동래·울산·센텀·영도·파워 글 발행 뒤 `sync_blog_posts.py` 재실행→배포 (패턴은 스크립트 `CASES`)
 - [ ] 다음 새 블로그 글에서 bucoms.com 링크 카드(oglink)가 실제로 만들어지는지 확인
 - [ ] (선택) 기존 인기·시공 사례 블로그 글 일부에 홈페이지 링크 추가, 네이버 RSS, 울산·김해·양산 페이지(글이 생기면)
@@ -72,4 +73,4 @@ git push "https://themeg87:<토큰>@github.com/themeg87/bucoms_web.git" main   #
 - 01:52 `0b28392` 검색 설명 80자 이내(네이버 SEO 경고 해결), 빌드 검사 추가. 사장님이 Vercel 에서 bucoms.com → www 를 308 로 변경(확인함).
 - 2026-09-26 블로그 쪽(저장소 밖): `blog_computer/tools/template/homepage.py`(주제별 홈페이지 링크·서명 WEB 줄), `check_post.py` [홈페이지] 경고, `blog_computer/CLAUDE.md`·스킬 post_format.md 규칙, `bucom_brand/brand.json` contact.website.
 - 2026-09-26 작업 기록 체계: 이 WORKLOG.md + 프로젝트 CLAUDE.md(자동 로드) + Stop 훅(기록 누락 시 갱신 요구).
-- 2026-09-26 02:50 `4d78146` 네이버 블로그 글 구글 색인 돕기: `/blog/` 전체 글 목록 페이지(488개 링크, sitemap 포함), 푸터·관련 글 섹션에서 `/blog/` 링크, 사례 페이지 원본 글 자동 연결(`CASE_POSTS`).
+- 2026-09-26 02:50 `4d78146` 네이버 블로그 글 구글 색인 돕기: `/blog/` 전체 글 목록 페이지(488개 링크, sitemap 포함), 푸터·관련 글 섹션에서 `/blog/` 링크, 사례 페이지 원본 글 자동 연결(`CASE_POSTS`). 배포 확인(실서버 488개 링크·sitemap).
