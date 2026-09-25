@@ -541,7 +541,7 @@ export default function App() {
       </AnimatePresence>
 
       {/* Hero Section */}
-      <section className="relative pt-48 pb-20 lg:pt-64 lg:pb-40 overflow-hidden">
+      <section id="hero" className="relative pt-48 pb-20 lg:pt-64 lg:pb-40 overflow-hidden">
         <div className="absolute top-0 right-0 w-1/2 h-full bg-slate-50 -z-10 hidden lg:block" />
         
         <div className="max-w-7xl mx-auto px-6">
@@ -999,7 +999,7 @@ export default function App() {
       </section>
 
       {/* CTA Section - Split Layout Style */}
-      <section className="py-40 bg-slate-900 relative overflow-hidden">
+      <section id="contact" className="py-40 bg-slate-900 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-20 items-center relative z-10">
           <div>
             <div className="text-brand text-xs font-bold uppercase tracking-[0.4em] mb-8">정직한 기술, 확실한 해결</div>
