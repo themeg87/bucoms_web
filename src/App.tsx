@@ -154,6 +154,16 @@ const CCTV_PHOTOS = [
 ];
 const CCTV_PLACES = ["빌라·공동주택", "상가·매장", "사무실", "주차장", "공장·창고"];
 
+// 첫 화면 사진 슬라이드 (실제 수리 현장, 사람 없는 사진만)
+const HERO_SLIDES = [
+  { src: "/hero/01-power.jpg", caption: "파워 교체 후 정상 작동" },
+  { src: "/hero/02-nude-test.jpg", caption: "전원 꺼짐 점검 · 누드 테스트" },
+  { src: "/hero/03-cleaning.jpg", caption: "컴퓨터 청소 전 · 후" },
+  { src: "/hero/04-board.jpg", caption: "메인보드 교체" },
+  { src: "/hero/05-nas.jpg", caption: "시놀로지 NAS 설치" }
+];
+const HERO_SLIDE_MS = 4500;
+
 // 수리·취급 가능 브랜드 (제휴 관계를 뜻하지 않음)
 const BRANDS = [
   "SAMSUNG", "LG", "APPLE", "MICROSOFT", "INTEL", "AMD", "NVIDIA", "ASUS",
@@ -279,6 +289,57 @@ const Logo = ({ size = "text-2xl", className = "" }: { size?: string, className?
     <span className={`ml-1 px-1.5 py-0.5 font-bold bg-slate-900 text-white ${size}`}>COM_</span>
   </div>
 );
+
+const HeroSlideshow = () => {
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    // 움직임 줄이기 설정을 켠 사용자에게는 자동으로 넘기지 않음
+    if (paused || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const timer = setInterval(() => setIndex(i => (i + 1) % HERO_SLIDES.length), HERO_SLIDE_MS);
+    return () => clearInterval(timer);
+  }, [paused]);
+
+  return (
+    <div
+      className="relative aspect-[4/5] rounded-[2rem] overflow-hidden shadow-3xl bg-slate-100"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      {HERO_SLIDES.map((slide, i) => (
+        <img
+          key={slide.src}
+          src={slide.src}
+          alt={`부컴 실제 수리 현장 - ${slide.caption}`}
+          width={800}
+          height={1000}
+          fetchPriority={i === 0 ? "high" : "low"}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${i === index ? 'opacity-100' : 'opacity-0'}`}
+          aria-hidden={i !== index}
+        />
+      ))}
+      <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-slate-900/60 to-transparent pointer-events-none" />
+      <div className="absolute left-4 right-4 bottom-4 flex items-end justify-between gap-4">
+        <div className="px-4 py-2 rounded-xl bg-slate-900/80 text-white text-xs font-bold backdrop-blur" aria-live="polite">
+          실제 수리 현장 · {HERO_SLIDES[index].caption}
+        </div>
+        <div className="flex gap-1.5 pb-2 shrink-0">
+          {HERO_SLIDES.map((slide, i) => (
+            <button
+              key={slide.src}
+              type="button"
+              aria-label={`${i + 1}번째 사진 보기: ${slide.caption}`}
+              aria-current={i === index}
+              onClick={() => setIndex(i)}
+              className={`h-2 rounded-full transition-all ${i === index ? 'w-6 bg-white' : 'w-2 bg-white/50 hover:bg-white/80'}`}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const ServiceTicker = ({ scrolled }: { scrolled: boolean }) => (
   <div className={`fixed left-0 w-full z-[50] transition-all duration-500 overflow-hidden border-b border-slate-100 bg-white/95 backdrop-blur-md ${scrolled ? 'top-[64px]' : 'top-[88px]'}`}>
@@ -604,19 +665,7 @@ export default function App() {
               transition={{ duration: 1, delay: 0.2 }}
               className="lg:col-span-5 relative"
             >
-              <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden shadow-3xl group">
-                <img 
-                  src="/hero-pc.jpg"
-                  alt="부컴이 파워를 교체한 뒤 정상 작동하는 고객 PC"
-                  width={800}
-                  height={1000}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute left-4 bottom-4 px-4 py-2 rounded-xl bg-slate-900/80 text-white text-xs font-bold backdrop-blur">
-                  실제 수리 현장 · 파워 교체 후 정상 작동
-                </div>
-              </div>
+              <HeroSlideshow />
             </motion.div>
           </div>
         </div>
