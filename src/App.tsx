@@ -29,7 +29,12 @@ import {
   ArrowRight,
   ClipboardCheck,
   Banknote,
-  History
+  History,
+  Cctv,
+  Cable,
+  MonitorPlay,
+  Route,
+  Info
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { TERMS_OF_SERVICE, PRIVACY_POLICY } from './constants/legal';
@@ -132,6 +137,21 @@ const TICKER_ITEMS = [
   "무선 와이파이 증폭기 설치",
   "SSD 교체 및 데이터 이전"
 ];
+
+// CCTV 섹션: 씨메르 시공 현장 사진과 작업 내용 (블로그 발행 글 기준)
+const CCTV_CASE_URL = "https://blog.naver.com/bucom_/224416850340";
+const CCTV_POINTS = [
+  { icon: <Route className="w-5 h-5" />, title: "동선 기준 위치 설계", desc: "사람과 차가 드나드는 길을 따라 사각지대가 없도록 카메라 위치를 잡습니다." },
+  { icon: <Cable className="w-5 h-5" />, title: "깔끔한 배선 마감", desc: "통신 단자함과 벽면을 따라 선을 정리해 밖으로 지저분하게 드러나지 않게 마감합니다." },
+  { icon: <MonitorPlay className="w-5 h-5" />, title: "녹화기·모니터 세팅까지", desc: "녹화기 연결부터 분할 모니터 거치까지, 설치 당일 바로 화면을 확인할 수 있게 해 드립니다." }
+];
+const CCTV_PHOTOS = [
+  { src: "/cctv/wiring.jpg", caption: "계단실 배선 작업" },
+  { src: "/cctv/dome-camera.jpg", caption: "필로티 천장 돔 카메라" },
+  { src: "/cctv/nvr.jpg", caption: "녹화기(NVR) 연결" },
+  { src: "/cctv/monitor.jpg", caption: "엘리베이터 홀 분할 모니터" }
+];
+const CCTV_PLACES = ["빌라·공동주택", "상가·매장", "사무실", "주차장", "공장·창고"];
 
 // 수리·취급 가능 브랜드 (제휴 관계를 뜻하지 않음)
 const BRANDS = [
@@ -349,14 +369,20 @@ export default function App() {
             <Logo size="text-2xl" className="group-hover:scale-105 transition-transform" />
           </div>
 
-            <div className="hidden lg:flex items-center gap-10">
-            {['services', 'guarantee', 'process', 'cases'].map((item) => (
+            <div className="hidden lg:flex items-center gap-7 xl:gap-10">
+            {[
+              { id: 'services', label: '서비스 안내' },
+              { id: 'cctv', label: 'CCTV 설치' },
+              { id: 'guarantee', label: '비용 안내' },
+              { id: 'process', label: '이용 절차' },
+              { id: 'cases', label: '시공 사례' },
+            ].map((item) => (
               <button 
-                key={item}
-                onClick={() => scrollToSection(item)} 
+                key={item.id}
+                onClick={() => scrollToSection(item.id)} 
                 className="text-sm font-semibold text-slate-500 hover:text-brand transition-colors tracking-wider whitespace-nowrap"
               >
-                {item === 'services' ? '서비스 안내' : item === 'guarantee' ? '비용 안내' : item === 'process' ? '이용 절차' : '시공 사례'}
+                {item.label}
               </button>
             ))}
             <a 
@@ -421,6 +447,7 @@ export default function App() {
                 <div className="flex flex-col gap-2">
                   {[
                     { id: 'services', label: '서비스 안내', icon: Zap },
+                    { id: 'cctv', label: 'CCTV 설치', icon: Cctv },
                     { id: 'guarantee', label: '비용 안내', icon: Banknote },
                     { id: 'process', label: '이용 절차', icon: Clock },
                     { id: 'cases', label: '시공 사례', icon: Users },
@@ -607,6 +634,104 @@ export default function App() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CCTV Section */}
+      <section id="cctv" className="py-32 lg:py-40 bg-slate-900 text-white overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+          <div>
+            <h2 className="text-xs font-bold text-brand tracking-[0.4em] uppercase mb-6 flex items-center gap-3">
+              <Cctv className="w-4 h-4" />
+              CCTV 설치 · 시공
+            </h2>
+            <h3 className="text-4xl md:text-6xl font-black leading-[1.05] tracking-tighter mb-8">
+              부산 CCTV 설치,<br />
+              <span className="text-slate-500">동선을 따라 설계합니다.</span>
+            </h3>
+            <p className="text-slate-400 text-lg leading-relaxed mb-10 max-w-xl">
+              카메라만 달고 끝내지 않습니다. 현장을 직접 보고 드나드는 길을 따라 위치를 잡고,
+              배선 정리부터 녹화기·모니터 세팅까지 한 번에 마무리합니다.
+            </p>
+
+            <div className="space-y-6 mb-10">
+              {CCTV_POINTS.map(point => (
+                <div key={point.title} className="flex gap-5">
+                  <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 text-brand flex items-center justify-center shrink-0">
+                    {point.icon}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-lg mb-1">{point.title}</h4>
+                    <p className="text-sm text-slate-400 leading-relaxed">{point.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex flex-wrap gap-2 mb-10">
+              {CCTV_PLACES.map(place => (
+                <span key={place} className="text-xs font-bold px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-slate-300">
+                  {place}
+                </span>
+              ))}
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 mb-8">
+              <a
+                href={BUSINESS.kakaoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#FEE500] text-[#191919] px-8 py-4 rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-[#F7E600] transition-colors"
+              >
+                <KakaoIcon className="w-5 h-5" />
+                카톡으로 현장 사진 보내고 상담
+              </a>
+              <a
+                href={`tel:${BUSINESS.phone}`}
+                className="bg-white/10 border border-white/10 px-8 py-4 rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-white/20 transition-colors"
+              >
+                <Phone className="w-5 h-5" />
+                {BUSINESS.phone}
+              </a>
+            </div>
+
+            <p className="flex items-start gap-2 text-xs text-slate-500 leading-relaxed max-w-xl">
+              <Info className="w-4 h-4 shrink-0 mt-px" />
+              매장·주차장처럼 여러 사람이 드나드는 곳에 CCTV를 달면 개인정보 보호법에 따라 촬영 목적·범위·관리자 연락처를 적은 안내판을 붙여야 합니다.
+            </p>
+          </div>
+
+          <div>
+            <div className="grid grid-cols-2 gap-4">
+              {CCTV_PHOTOS.map(photo => (
+                <figure key={photo.src} className="relative aspect-square rounded-3xl overflow-hidden bg-slate-800">
+                  <img
+                    src={photo.src}
+                    alt={`부산 수영구 CCTV 설치 현장 - ${photo.caption}`}
+                    loading="lazy"
+                    width={700}
+                    height={700}
+                    className="w-full h-full object-cover"
+                  />
+                  <figcaption className="absolute left-3 bottom-3 px-3 py-1.5 rounded-lg bg-slate-900/80 text-[11px] font-bold">
+                    {photo.caption}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+            <a
+              href={CCTV_CASE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-6 flex items-center justify-between gap-4 p-5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+            >
+              <span>
+                <span className="block text-xs font-bold text-brand mb-1">시공 사례 · 부산 수영구</span>
+                <span className="block font-bold">씨메르 필로티 주차장·엘리베이터 홀 CCTV 시공기</span>
+              </span>
+              <ArrowUpRight className="w-5 h-5 shrink-0" />
+            </a>
           </div>
         </div>
       </section>
@@ -869,6 +994,7 @@ export default function App() {
                 <h4 className="text-xs font-black text-slate-900 uppercase tracking-widest mb-8">바로가기</h4>
                 <ul className="space-y-4 text-sm font-bold text-slate-400">
                   <li><button onClick={() => scrollToSection('services')} className="hover:text-brand transition-colors cursor-pointer">서비스 안내</button></li>
+                  <li><button onClick={() => scrollToSection('cctv')} className="hover:text-brand transition-colors cursor-pointer">CCTV 설치</button></li>
                   <li><button onClick={() => scrollToSection('guarantee')} className="hover:text-brand transition-colors cursor-pointer">비용 안내</button></li>
                   <li><button onClick={() => scrollToSection('process')} className="hover:text-brand transition-colors cursor-pointer">이용 절차</button></li>
                   <li><button onClick={() => scrollToSection('cases')} className="hover:text-brand transition-colors cursor-pointer">시공 사례</button></li>
