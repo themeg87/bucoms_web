@@ -498,9 +498,10 @@ export default function App() {
         
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-12 gap-12 items-center">
+            {/* 첫 화면 글자는 검색엔진이 읽을 수 있도록 투명 효과 없이 위치만 움직임 */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ y: 30 }}
+              animate={{ y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
               className="lg:col-span-7"
             >
@@ -508,13 +509,16 @@ export default function App() {
                 <span className="w-1.5 h-1.5 rounded-full bg-brand animate-pulse" />
                 {BUSINESS.serviceArea} 출장 전문
               </div>
-              <h1 className="text-6xl md:text-8xl font-black text-slate-900 leading-[0.85] tracking-tighter mb-10 text-balance">
+              <p className="text-6xl md:text-8xl font-black text-slate-900 leading-[0.85] tracking-tighter mb-10 text-balance">
                 FAST REPAIR,<br />
                 <span className="text-brand italic font-serif font-bold">Perfect</span> RESULT.
+              </p>
+              <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight mb-4">
+                부산 컴퓨터 출장수리 · CCTV 설치, 부컴
               </h1>
               <p className="text-lg text-slate-500 mb-12 max-w-xl leading-relaxed font-medium">
-                {BUSINESS.serviceArea} 컴퓨터 출장 수리 전문 서비스 BUCOM.<br />
-                지역 어디서나 신속한 방문 서비스, 10년 경력의 베테랑 엔지니어가 당신의 문제를 즉시 해결합니다.
+                {BUSINESS.serviceArea} 어디든 10년 경력 엔지니어가 직접 방문합니다.<br />
+                컴퓨터 수리·조립PC·데이터 복구부터 네트워크·NAS·CCTV 설치까지 한 번에 해결해 드립니다.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-5">
@@ -555,7 +559,7 @@ export default function App() {
               <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden shadow-3xl group">
                 <img 
                   src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&q=80&w=1000" 
-                  alt="High Performance Custom PC" 
+                  alt="부컴 조립PC 내부" 
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   referrerPolicy="no-referrer"
                 />
@@ -855,7 +859,7 @@ export default function App() {
             <div className="md:col-span-5">
               <Logo size="text-2xl" className="mb-8" />
               <p className="text-slate-500 font-medium max-w-sm mb-10 leading-relaxed">
-                부컴은 10년 경력의 베테랑 엔지니어가 직접 운영하는 컴퓨터 전문 수리 서비스입니다. 
+                부컴은 10년 경력의 베테랑 엔지니어가 직접 운영하는 부산 컴퓨터 출장수리 · CCTV 설치 전문 업체입니다.
                 정직한 진단, 투명한 서비스, 완벽한 기술력으로 고객님의 디지털 라이프를 지킵니다.
               </p>
             </div>
