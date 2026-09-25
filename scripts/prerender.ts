@@ -8,7 +8,7 @@ import { pathToFileURL } from "url";
 
 const dist = path.resolve("dist");
 const ssrEntry = path.resolve("dist-ssr/entry-server.js");
-const { render, ALL_PATHS, SITE_URL, pageMeta } = await import(pathToFileURL(ssrEntry).href);
+const { render, ALL_PATHS, SITE_URL, pageMeta, DESCRIPTION_MAX } = await import(pathToFileURL(ssrEntry).href);
 
 const template = fs.readFileSync(path.join(dist, "index.html"), "utf-8");
 const marker = '<div id="root"></div>';
@@ -23,6 +23,9 @@ const setMeta = (html: string, pattern: RegExp, value: string) => {
 const today = new Date().toISOString().slice(0, 10);
 for (const pagePath of ALL_PATHS as string[]) {
   const meta = pageMeta(pagePath);
+  if ([...meta.description].length > DESCRIPTION_MAX) {
+    throw new Error(`${pagePath} 설명이 ${[...meta.description].length}자입니다. ${DESCRIPTION_MAX}자 이내로 줄여 주세요: ${meta.description}`);
+  }
   const url = SITE_URL + meta.path;
   let html = template.replace(marker, `<div id="root">${render(pagePath)}</div>`);
   html = html.replace(/<title>[^<]*<\/title>/, `<title>${escapeAttr(meta.title)}</title>`);

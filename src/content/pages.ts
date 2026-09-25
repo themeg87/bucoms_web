@@ -186,7 +186,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     slug: "computer-repair",
     name: "컴퓨터 출장수리",
     title: "부산 컴퓨터 출장수리",
-    description: "부산·울산·김해·양산 컴퓨터 출장수리 부컴. 전원 불량, 갑자기 꺼짐, 블루스크린, 부팅 불량, 느려짐까지 10년 경력 엔지니어가 직접 방문해 점검합니다. 출장비 10,000원(수리 시 면제).",
+    description: "부산 컴퓨터 출장수리 부컴. 전원 불량·꺼짐·블루스크린·느려짐, 10년 경력 엔지니어가 직접 방문해 점검합니다.",
     h1: "부산 컴퓨터 출장수리",
     intro: [
       "컴퓨터가 안 켜지거나, 쓰다가 꺼지거나, 갑자기 느려졌다면 부컴이 직접 방문합니다.",
@@ -223,7 +223,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     slug: "cctv",
     name: "CCTV 설치",
     title: "부산 CCTV 설치",
-    description: "부산 CCTV 설치 부컴. 빌라·공동주택, 상가, 사무실, 주차장까지 드나드는 동선을 따라 카메라 위치를 설계하고, 배선 정리부터 녹화기·모니터 세팅까지 한 번에 마무리합니다.",
+    description: "부산 CCTV 설치 부컴. 동선 기준 카메라 설계, 깔끔한 배선, 녹화기·모니터 세팅까지 한 번에 해 드립니다.",
     h1: "부산 CCTV 설치",
     intro: [
       "카메라만 달고 끝내지 않습니다. 현장을 직접 보고 사람과 차가 드나드는 길을 따라 위치를 잡습니다.",
@@ -248,7 +248,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     slug: "computer-cleaning",
     name: "컴퓨터 청소",
     title: "부산 컴퓨터 청소",
-    description: "부산 컴퓨터 청소 부컴. 팬과 쿨러를 떼어 따로 청소하고 CPU 서멀구리스까지 재도포합니다. 기본 55,000원, 출장 청소 가능.",
+    description: "부산 컴퓨터 청소 부컴. 팬·쿨러 분리 청소와 서멀구리스 재도포, 기본 55,000원. 출장 청소 가능합니다.",
     h1: "부산 컴퓨터 청소",
     intro: [
       "옆판을 열어 보면 팬 날개, 케이블, 케이스 바닥까지 먼지가 덮인 경우가 많습니다. 이 상태면 바람이 제대로 통하지 않아 열이 빠지기 어렵고 소음도 커집니다.",
@@ -277,7 +277,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     slug: "data-recovery",
     name: "데이터 복구",
     title: "부산 데이터 복구",
-    description: "부산 데이터 복구 부컴. 삭제된 파일, 포맷된 하드, 인식 불량 외장하드·SSD·USB의 데이터를 복원하고, 자료 백업과 데이터 이전·완전 삭제도 도와드립니다.",
+    description: "부산 데이터 복구 부컴. 삭제된 파일, 인식 안 되는 외장하드·SSD 복구와 백업·데이터 이전까지 도와드립니다.",
     h1: "부산 데이터 복구",
     intro: [
       "파일이 갑자기 사라졌거나, 외장하드가 인식되지 않거나, 실수로 포맷했다면 더 쓰지 말고 먼저 연락 주세요.",
@@ -300,7 +300,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     slug: "custom-pc",
     name: "조립PC·업그레이드",
     title: "부산 조립PC·업그레이드",
-    description: "부산 조립PC 부컴. 사무용부터 게이밍 PC까지 용도에 맞는 부품 선정, 깔끔한 선 정리, 성능 테스트까지. 기존 PC 업그레이드와 부품 교체도 상담해 드립니다.",
+    description: "부산 조립PC 부컴. 사무용부터 게이밍 PC까지 용도에 맞춘 부품 선정·조립과 업그레이드를 상담해 드립니다.",
     h1: "부산 조립PC · 업그레이드",
     intro: [
       "사무용부터 하이엔드 게이밍 PC까지, 용도와 예산에 맞춰 부품을 고르고 조립해 드립니다.",
@@ -324,7 +324,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     slug: "nas-network",
     name: "NAS·네트워크",
     title: "부산 NAS 설치·네트워크 구축",
-    description: "부산 NAS 설치·사무실 네트워크 구축 부컴. 시놀로지 NAS 설치, 사무실 랜공사, 프린터 공유, 와이파이 점검까지 직접 방문해 세팅합니다.",
+    description: "부산 NAS 설치·네트워크 구축 부컴. 시놀로지 NAS, 사무실 랜공사, 프린터 공유, 와이파이 점검까지.",
     h1: "부산 NAS 설치 · 네트워크 구축",
     intro: [
       "사무실 자료를 한곳에 모아 함께 쓰고 싶거나, 인터넷·프린터 공유가 자꾸 말썽이라면 부컴이 방문해 세팅합니다.",
@@ -406,6 +406,16 @@ export const ALL_PATHS = [
   ...CASE_PAGES.map(c => casePath(c.slug))
 ];
 
+// 검색 결과 설명은 네이버 권장에 맞춰 80자 이내 (scripts/prerender.ts 에서 검사)
+export const DESCRIPTION_MAX = 80;
+export const HOME_DESCRIPTION = "부산 컴퓨터 출장수리·CCTV 설치 부컴. 10년 경력 엔지니어 직접 방문, 조립PC·데이터 복구·NAS까지. 출장비 10,000원.";
+
+function caseDescription(c: CasePage) {
+  const base = `${c.area} ${c.category} 사례: ${c.title}.`;
+  const withSuffix = `${base} 부컴이 직접 다녀온 현장입니다.`;
+  return withSuffix.length <= DESCRIPTION_MAX ? withSuffix : base;
+}
+
 // 페이지별 검색 제목·설명·이동 경로
 export function pageMeta(pathname: string) {
   const route = resolveRoute(pathname);
@@ -424,7 +434,7 @@ export function pageMeta(pathname: string) {
       return {
         path: areaPath(a.slug),
         title: `부산 ${a.name} 컴퓨터수리 · CCTV 설치 | 부컴 BUCOM`,
-        description: `부산 ${a.name} 컴퓨터 출장수리·CCTV 설치 부컴. 10년 경력 엔지니어가 ${a.name} 어디든 직접 방문합니다. 출장비 10,000원(수리 시 면제), 연중무휴 09:00-22:00.`,
+        description: `부산 ${a.name} 컴퓨터 출장수리·CCTV 설치 부컴. 10년 경력 엔지니어 직접 방문, 출장비 10,000원(수리 시 면제).`,
         image: undefined,
         breadcrumbs: [home, { name: `${a.name} 컴퓨터수리`, path: areaPath(a.slug) }]
       };
@@ -433,7 +443,7 @@ export function pageMeta(pathname: string) {
       return {
         path: casePath(route.page.slug),
         title: `${route.page.area} ${route.page.category} 사례 - ${route.page.title} | 부컴`,
-        description: route.page.summary,
+        description: caseDescription(route.page),
         image: route.page.photos[0]?.src,
         breadcrumbs: [home, { name: "시공 사례", path: "/#cases" }, { name: route.page.title, path: casePath(route.page.slug) }]
       };
@@ -441,7 +451,7 @@ export function pageMeta(pathname: string) {
       return {
         path: "/",
         title: "부산 컴퓨터 출장수리 · CCTV 설치 | 부컴 BUCOM",
-        description: "부산·울산·김해·양산 컴퓨터 출장수리와 CCTV 설치 전문 부컴. 10년 경력 엔지니어가 직접 방문해 컴퓨터 수리, 조립PC, 데이터 복구, 네트워크·NAS 설치까지 해결합니다. 출장비 10,000원(수리 시 면제), 연중무휴 09:00-22:00.",
+        description: HOME_DESCRIPTION,
         image: undefined,
         breadcrumbs: [home]
       };
