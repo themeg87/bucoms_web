@@ -95,27 +95,27 @@ const SERVICES = [
 const STEPS = [
   { 
     number: "01", 
-    title: "상담 접수", 
-    desc: "컴퓨터 전문 상담원이 고객님의 문의를 정성껏 접수하여 최적의 해결책을 안내합니다.",
-    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800"
+    title: "전화·카톡 상담", 
+    desc: "전화나 카카오톡으로 증상을 알려 주세요. 사진 한두 장만 보내 주셔도 어떤 상태인지 먼저 봐 드립니다.",
+    image: "/steps/01-contact.jpg"
   },
   { 
     number: "02", 
-    title: "기사 배정", 
-    desc: "접수된 내용을 바탕으로 고객님의 문제를 가장 잘 해결해 드릴 베테랑 엔지니어를 즉시 배정합니다.",
-    image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&q=80&w=800"
+    title: "방문 및 진단", 
+    desc: "10년 경력 엔지니어가 직접 방문해 본체를 열고 부품을 하나씩 점검해 정확한 원인을 찾습니다.",
+    image: "/steps/02-diagnosis.jpg"
   },
   { 
     number: "03", 
-    title: "방문 및 진단", 
-    desc: "전문 엔지니어가 직접 방문하여 컴퓨터 본체를 열고 정밀 장비로 꼼꼼하게 점검하여 정확한 원인을 진단합니다.",
-    image: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&q=80&w=800"
+    title: "견적 안내 후 수리", 
+    desc: "원인과 비용을 먼저 안내해 드리고, 동의하신 경우에만 부품 교체와 수리를 진행합니다.",
+    image: "/steps/03-repair.jpg"
   },
   { 
     number: "04", 
-    title: "수리 완료", 
-    desc: "수리 완료 후 정상 작동하는 컴퓨터를 보며 환하게 웃으시는 고객님의 모습이 저희 부컴의 가장 큰 보람입니다.",
-    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800"
+    title: "테스트 후 마무리", 
+    desc: "메모리·그래픽·온도 테스트로 정상 작동을 확인한 뒤 마무리합니다.",
+    image: "/steps/04-test.jpg"
   }
 ];
 
@@ -146,7 +146,7 @@ const CCTV_POINTS = [
   { icon: <MonitorPlay className="w-5 h-5" />, title: "녹화기·모니터 세팅까지", desc: "녹화기 연결부터 분할 모니터 거치까지, 설치 당일 바로 화면을 확인할 수 있게 해 드립니다." }
 ];
 const CCTV_PHOTOS = [
-  { src: "/cctv/wiring.jpg", caption: "계단실 배선 작업" },
+  { src: "/cctv/cabinet.jpg", caption: "단자함 내부 배선 정리" },
   { src: "/cctv/dome-camera.jpg", caption: "필로티 천장 돔 카메라" },
   { src: "/cctv/nvr.jpg", caption: "녹화기(NVR) 연결" },
   { src: "/cctv/monitor.jpg", caption: "엘리베이터 홀 분할 모니터" }
@@ -585,8 +585,10 @@ export default function App() {
             >
               <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden shadow-3xl group">
                 <img 
-                  src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&q=80&w=1000" 
-                  alt="부컴 조립PC 내부" 
+                  src="/hero-onsite.jpg"
+                  alt="부컴 엔지니어가 현장에서 배선 작업을 하는 모습"
+                  width={800}
+                  height={1000}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   referrerPolicy="no-referrer"
                 />
@@ -756,6 +758,11 @@ export default function App() {
       {/* 4대 안심 약속 Section */}
       <section id="guarantee" className="py-24 bg-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
+          <div className="max-w-2xl mb-16">
+            <h2 className="text-xs font-bold text-brand tracking-[0.4em] uppercase mb-6">비용 안내</h2>
+            <h3 className="text-5xl md:text-7xl font-black text-slate-900 leading-[0.9]">비용은 미리,<br /><span className="text-slate-300">투명하게.</span></h3>
+          </div>
+
           <div className="grid lg:grid-cols-4 gap-8">
             {[
               {
@@ -796,25 +803,49 @@ export default function App() {
             ))}
           </div>
           
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mt-12 p-6 rounded-3xl bg-brand/5 border border-brand/10 flex flex-col md:flex-row items-center justify-between gap-6"
-          >
+          <div className="mt-16 grid md:grid-cols-3 gap-6">
+            {[
+              {
+                title: "출장비",
+                price: "10,000원",
+                note: "수리를 진행하시면 출장비는 받지 않습니다.",
+                detail: `${BUSINESS.serviceArea} 전 지역`
+              },
+              {
+                title: "컴퓨터 청소",
+                price: "기본 55,000원",
+                note: "팬·쿨러를 떼어 따로 청소하고 CPU 서멀구리스 재도포까지 진행합니다.",
+                detail: "오염도·작업 난이도에 따라 추가 비용이 생길 수 있고, 청소가 불가능할 만큼 오염이 심하면 케이스 교체를 안내해 드립니다."
+              },
+              {
+                title: "수리 · 설치",
+                price: "점검 후 견적",
+                note: "부품 교체, 윈도우 설치, 데이터 복구, 네트워크·NAS·CCTV 설치 등",
+                detail: "증상과 필요한 부품에 따라 달라서, 점검 후 비용을 먼저 안내하고 동의하신 경우에만 진행합니다."
+              }
+            ].map(item => (
+              <div key={item.title} className="p-8 rounded-[2rem] border border-slate-100 bg-white flex flex-col">
+                <div className="text-sm font-bold text-slate-500 mb-2">{item.title}</div>
+                <div className="text-3xl font-black text-slate-900 tracking-tight mb-4">{item.price}</div>
+                <p className="text-sm text-slate-700 font-medium leading-relaxed mb-3">{item.note}</p>
+                <p className="text-xs text-slate-500 leading-relaxed mt-auto">{item.detail}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 p-6 rounded-3xl bg-brand/5 border border-brand/10 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-brand text-white flex items-center justify-center shadow-lg shadow-brand/20">
+              <div className="w-12 h-12 rounded-full bg-brand text-white flex items-center justify-center shadow-lg shadow-brand/20 shrink-0">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
-              <div>
-                <h5 className="text-lg font-bold text-slate-900">{BUSINESS.serviceArea} 출장비 10,000원</h5>
-                <p className="text-sm text-slate-500 font-medium">수리 진행 시 출장비는 면제되어 더욱 합리적입니다.</p>
-              </div>
+              <p className="font-bold text-slate-900">
+                정확한 비용은 점검 후, 수리 전에 먼저 안내해 드립니다.
+              </p>
             </div>
-            <a href={`tel:${BUSINESS.phone}`} className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-brand transition-colors shadow-xl">
-              지금 바로 상담하기
+            <a href={BUSINESS.kakaoUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-brand transition-colors shadow-xl whitespace-nowrap">
+              카톡으로 비용 문의
             </a>
-          </motion.div>
+          </div>
         </div>
       </section>
 
