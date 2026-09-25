@@ -7,7 +7,7 @@ import './index.css';
 const container = document.getElementById('root')!;
 const app = (
   <StrictMode>
-    <App />
+    <App path={window.location.pathname} />
   </StrictMode>
 );
 

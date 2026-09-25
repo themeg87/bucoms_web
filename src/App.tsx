@@ -40,54 +40,66 @@ import { motion, AnimatePresence } from 'motion/react';
 import { TERMS_OF_SERVICE, PRIVACY_POLICY } from './constants/legal';
 import { BUSINESS } from './constants/business';
 import { track } from './analytics';
+import { KakaoIcon } from './components/KakaoIcon';
+import { CaseCard } from './components/CaseCard';
+import { SubPage } from './pages/SubPage';
+import { AREA_PAGES, CASE_PAGES, SERVICE_PAGES, areaPath, casePath, resolveRoute, servicePath } from './content/pages';
 import Markdown from 'react-markdown';
 
 const SERVICES = [
   {
     icon: <Monitor className="w-6 h-6" />,
     title: "데스크탑 판매",
+    href: servicePath("custom-pc"),
     description: "사무용부터 하이엔드 게이밍 PC까지, 용도에 맞는 최적의 데스크탑 판매 및 맞춤 상담.",
     tags: ["사무용", "게이밍", "워크스테이션"]
   },
   {
     icon: <Cpu className="w-6 h-6" />,
     title: "조립",
+    href: servicePath("custom-pc"),
     description: "부품 선정부터 깔끔한 선 정리까지, 전문가의 손길로 완성되는 고성능 커스텀 조립 PC.",
     tags: ["커스텀PC", "선정리", "성능테스트"]
   },
   {
     icon: <ShieldCheck className="w-6 h-6" />,
     title: "AS대행/부품구매대행",
+    href: servicePath("custom-pc"),
     description: "브랜드 PC 및 부품별 번거로운 AS 절차와 부품 구매를 부컴이 대신 빠르고 정확하게 처리해 드립니다.",
     tags: ["삼성/LG", "델/HP", "부품구매"]
   },
   {
     icon: <Wrench className="w-6 h-6" />,
     title: "데스크탑 전문 수리",
+    href: servicePath("computer-repair"),
     description: "부팅 불량, 전원 고장, 블루스크린 등 모든 데스크탑 하드웨어 및 소프트웨어 고장 수리.",
     tags: ["메인보드", "그래픽카드", "파워교체"]
   },
   {
     icon: <Database className="w-6 h-6" />,
     title: "데이터 정밀 복구",
+    href: servicePath("data-recovery"),
     description: "삭제된 파일, 포맷된 하드, 인식 불량 외장하드 등 소중한 데이터를 정밀 장비로 복원.",
     tags: ["HDD/SSD", "USB", "NAS복구"]
   },
   {
     icon: <Settings className="w-6 h-6" />,
     title: "OS설치 및 최적화",
+    href: servicePath("computer-repair"),
     description: "Windows 10/11 정품 설치, 드라이버 세팅 및 시스템 속도 향상을 위한 최적화 서비스.",
     tags: ["윈도우설치", "드라이버", "속도개선"]
   },
   {
     icon: <Wifi className="w-6 h-6" />,
     title: "네트워크 및 NAS/CCTV 구축",
+    href: servicePath("nas-network"),
     description: "사무실 랜공사, NAS 데이터 서버 구축, CCTV 보안 시스템 설치 및 기업용 네트워크 최적화 서비스.",
     tags: ["랜공사", "NAS설치", "CCTV설치", "기업보안"]
   },
   {
     icon: <Laptop className="w-6 h-6" />,
     title: "노트북 수리",
+    href: servicePath("computer-repair"),
     description: "액정 파손, 키보드 교체, 배터리 수명 문제 및 노트북 내부 청소/서멀 재도포 서비스.",
     tags: ["액정교체", "배터리", "맥북수리"]
   }
@@ -140,7 +152,6 @@ const TICKER_ITEMS = [
 ];
 
 // CCTV 섹션: 씨메르 시공 현장 사진과 작업 내용 (블로그 발행 글 기준)
-const CCTV_CASE_URL = "https://blog.naver.com/bucom_/224416850340";
 const CCTV_POINTS = [
   { icon: <Route className="w-5 h-5" />, title: "동선 기준 위치 설계", desc: "사람과 차가 드나드는 길을 따라 사각지대가 없도록 카메라 위치를 잡습니다." },
   { icon: <Cable className="w-5 h-5" />, title: "깔끔한 배선 마감", desc: "통신 단자함과 벽면을 따라 선을 정리해 밖으로 지저분하게 드러나지 않게 마감합니다." },
@@ -170,63 +181,6 @@ const BRANDS = [
   "MSI", "LENOVO", "DELL", "HP", "ACER", "GIGABYTE", "RAZER", "LOGITECH"
 ];
 
-// 블로그에 올린 실제 현장 사례 (사진: public/cases)
-const CASES = [
-  {
-    area: "부산 동래",
-    category: "전원 꺼짐 점검",
-    title: "한 번씩 꺼지던 컴퓨터, 원인은 메인보드",
-    story: "고객님은 램이나 그래픽카드를 의심하셨지만, 부품을 케이스 밖으로 꺼내 누드 테스트부터 전체 점검을 했습니다. MemTest86(램)과 3DMark(그래픽카드)는 모두 정상이었고, 메인보드 문제를 확인해 B760M 보드로 교체했습니다.",
-    tags: ["누드 테스트", "MemTest86", "3DMark", "메인보드 교체"],
-    image: "/cases/dongnae-board.jpg",
-    url: BUSINESS.blogUrl
-  },
-  {
-    area: "부산 수영구",
-    category: "CCTV 설치",
-    title: "씨메르 필로티 주차장·엘리베이터 홀 CCTV",
-    story: "필로티 주차장·출입구, 분리수거장, 계단실까지 사람과 차가 드나드는 동선을 따라 카메라 위치를 잡았습니다. 배선은 통신 단자함과 계단실 벽을 따라 정리하고, 엘리베이터 홀에 분할 모니터를 달아 오가며 바로 확인할 수 있게 했습니다.",
-    tags: ["CCTV 설치", "배선 정리", "분할 모니터"],
-    image: "/cases/suyeong-cctv.jpg",
-    url: "https://blog.naver.com/bucom_/224416850340"
-  },
-  {
-    area: "울산 남구",
-    category: "메인보드·그래픽카드 교체",
-    title: "장착 중 손상된 보드와 그래픽카드 교체",
-    story: "그래픽카드를 끼우다 슬롯이 크게 꺾이면서 보드와 그래픽카드가 함께 고장 났습니다. 새 제품이 단종돼 같은 모델 보드(X470 AORUS ULTRA GAMING)와 RTX 2060을 리퍼 부품으로 구해 교체하고, 드라이버 정리와 테스트까지 마친 뒤 출고했습니다.",
-    tags: ["출장 수거", "메인보드 교체", "RTX 2060", "드라이버 정리"],
-    image: "/cases/ulsan-gpu-board.jpg",
-    url: BUSINESS.blogUrl
-  },
-  {
-    area: "해운대 센텀",
-    category: "출장 컴퓨터 청소",
-    title: "산 뒤로 한 번도 열지 않은 본체 청소",
-    story: "이사 후 컴퓨터 상태를 보고 놀라 블로그를 보고 연락 주신 고객님 댁으로 출장을 갔습니다. 팬과 쿨러를 떼어 하나씩 닦고, CPU 서멀구리스까지 새로 발랐습니다.",
-    tags: ["출장 청소", "팬·쿨러 분리", "서멀구리스 재도포"],
-    image: "/cases/centum-cleaning.jpg",
-    url: BUSINESS.blogUrl
-  },
-  {
-    area: "부산 영도구",
-    category: "NAS 설치",
-    title: "지역관리센터 시놀로지 NAS 설치",
-    story: "관급 계약으로 Synology DS925neo+와 시놀로지 정품 HAT3300 6TB 하드를 설치했습니다. 설치와 설정은 약 2시간 걸렸고, PC 탐색기에서 네트워크 드라이브로 바로 쓸 수 있게 연결했습니다.",
-    tags: ["DS925neo+", "HAT3300 6TB", "네트워크 드라이브"],
-    image: "/cases/yeongdo-nas.jpg",
-    url: BUSINESS.blogUrl
-  },
-  {
-    area: "부산",
-    category: "파워 교체",
-    title: "전원이 안 켜지던 PC, 파워 교체로 해결",
-    story: "전원이 안 켜진다는 연락을 받고 먼저 증상을 자세히 상담했습니다. 마이크로닉스 Classic II 600W 새 제품으로 파워를 교체하고, 그 자리에서 정상 작동을 확인했습니다.",
-    tags: ["전원 불량", "파워 교체", "600W 80PLUS BRONZE"],
-    image: "/cases/power-supply.jpg",
-    url: BUSINESS.blogUrl
-  }
-];
 
 // website: 봇 차단용 숨김 필드(사람은 비워 둠)
 const EMPTY_FORM = { name: "", phone: "", address: "", description: "", website: "" };
@@ -277,12 +231,6 @@ const LegalModal = ({ isOpen, onClose, title, content }: { isOpen: boolean, onCl
   </AnimatePresence>
 );
 
-const KakaoIcon = ({ className = "w-6 h-6" }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
-    <path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.558 1.712 4.8 4.346 6.09l-.843 3.127c-.04.148.05.3.197.34.047.013.096.013.143 0l3.64-2.418c.5.05 1.01.076 1.517.076 4.97 0 9-3.185 9-7.115S16.97 3 12 3z" />
-  </svg>
-);
-
 const Logo = ({ size = "text-2xl", className = "" }: { size?: string, className?: string }) => (
   <div className={`flex items-center tracking-tighter font-sans ${className}`}>
     <span className={`font-light text-slate-900 ${size}`}>BU</span>
@@ -320,11 +268,14 @@ const HeroSlideshow = () => {
         />
       ))}
       <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-slate-900/60 to-transparent pointer-events-none" />
-      <div className="absolute left-4 right-4 bottom-4 flex items-end justify-between gap-4">
-        <div className="px-4 py-2 rounded-xl bg-slate-900/80 text-white text-xs font-bold backdrop-blur" aria-live="polite">
+      <div className="absolute left-4 right-4 bottom-4">
+        <div className="inline-block px-4 py-2 rounded-xl bg-slate-900/80 text-white text-xs font-bold backdrop-blur" aria-live="polite">
           실제 수리 현장 · {HERO_SLIDES[index].caption}
         </div>
-        <div className="flex gap-1.5 pb-2 shrink-0">
+      </div>
+      {/* 오른쪽 아래는 떠 있는 상담 버튼과 겹쳐서 점은 오른쪽 위에 둠 */}
+      <div className="absolute top-4 right-4 px-3 py-2 rounded-full bg-slate-900/40 backdrop-blur">
+        <div className="flex gap-1.5">
           {HERO_SLIDES.map((slide, i) => (
             <button
               key={slide.src}
@@ -361,7 +312,9 @@ const ServiceTicker = ({ scrolled }: { scrolled: boolean }) => (
   </div>
 );
 
-export default function App() {
+export default function App({ path = "/" }: { path?: string }) {
+  const route = resolveRoute(path);
+  const isHome = route.type === "home";
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -371,12 +324,14 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+  // 메뉴 링크(/#services 등): 홈에서는 부드럽게 스크롤, 다른 페이지에서는 홈으로 이동
+  const goToSection = (e: React.MouseEvent, id: string) => {
     setIsMenuOpen(false);
+    const element = isHome ? document.getElementById(id) : null;
+    if (!element) return;
+    e.preventDefault();
+    element.scrollIntoView({ behavior: 'smooth' });
+    history.replaceState(null, '', `#${id}`);
   };
 
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -446,9 +401,9 @@ export default function App() {
       {/* Navigation */}
       <nav className={`fixed top-0 w-full z-[60] transition-all duration-500 ${scrolled ? 'glass py-3' : 'bg-transparent py-6'}`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-          <div className="flex items-center cursor-pointer group" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
+          <a href="/" aria-label="부컴 홈" className="flex items-center group">
             <Logo size="text-2xl" className="group-hover:scale-105 transition-transform" />
-          </div>
+          </a>
 
             <div className="hidden lg:flex items-center gap-7 xl:gap-10">
             {[
@@ -458,13 +413,14 @@ export default function App() {
               { id: 'process', label: '이용 절차' },
               { id: 'cases', label: '시공 사례' },
             ].map((item) => (
-              <button 
+              <a 
                 key={item.id}
-                onClick={() => scrollToSection(item.id)} 
+                href={`/#${item.id}`}
+                onClick={(e) => goToSection(e, item.id)} 
                 className="text-sm font-semibold text-slate-500 hover:text-brand transition-colors tracking-wider whitespace-nowrap"
               >
                 {item.label}
-              </button>
+              </a>
             ))}
             <a 
               href={BUSINESS.blogUrl} 
@@ -534,14 +490,15 @@ export default function App() {
                     { id: 'process', label: '이용 절차', icon: Clock },
                     { id: 'cases', label: '시공 사례', icon: Users },
                   ].map((item) => (
-                    <button 
+                    <a 
                       key={item.id}
-                      onClick={() => { scrollToSection(item.id); setIsMenuOpen(false); }} 
+                      href={`/#${item.id}`}
+                      onClick={(e) => goToSection(e, item.id)} 
                       className="flex items-center gap-4 w-full text-lg font-bold text-slate-700 text-left py-4 px-4 rounded-2xl hover:bg-slate-50 active:bg-slate-100 transition-all"
                     >
                       <item.icon className="w-5 h-5 text-brand/50" />
                       {item.label}
-                    </button>
+                    </a>
                   ))}
                   
                   <a 
@@ -601,6 +558,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
+      {isHome ? (<>
       {/* Hero Section */}
       <section id="hero" className="relative pt-48 pb-20 lg:pt-64 lg:pb-40 overflow-hidden">
         <div className="absolute top-0 right-0 w-1/2 h-full bg-slate-50 -z-10 hidden lg:block" />
@@ -697,7 +655,9 @@ export default function App() {
                   <div className="w-12 h-12 text-brand mb-10 group-hover:scale-110 transition-transform duration-500">
                     {service.icon}
                   </div>
-                  <h4 className="text-xl font-bold text-slate-900 mb-4 tracking-tight">{service.title}</h4>
+                  <h4 className="text-xl font-bold text-slate-900 mb-4 tracking-tight">
+                    <a href={service.href} className="after:absolute after:inset-0 hover:text-brand transition-colors">{service.title}</a>
+                  </h4>
                   <p className="text-slate-500 text-sm mb-8 leading-relaxed font-medium">{service.description}</p>
                   <div className="flex flex-wrap gap-1.5">
                     {service.tags.map(tag => (
@@ -795,18 +755,28 @@ export default function App() {
                 </figure>
               ))}
             </div>
-            <a
-              href={CCTV_CASE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 flex items-center justify-between gap-4 p-5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
-            >
-              <span>
-                <span className="block text-xs font-bold text-brand mb-1">시공 사례 · 부산 수영구</span>
-                <span className="block font-bold">씨메르 필로티 주차장·엘리베이터 홀 CCTV 시공기</span>
-              </span>
-              <ArrowUpRight className="w-5 h-5 shrink-0" />
-            </a>
+            <div className="mt-6 grid sm:grid-cols-2 gap-4">
+              <a
+                href={casePath("suyeong-cctv")}
+                className="flex items-center justify-between gap-4 p-5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+              >
+                <span>
+                  <span className="block text-xs font-bold text-brand mb-1">시공 사례 · 부산 수영구</span>
+                  <span className="block font-bold">씨메르 필로티 주차장 CCTV</span>
+                </span>
+                <ArrowUpRight className="w-5 h-5 shrink-0" />
+              </a>
+              <a
+                href={servicePath("cctv")}
+                className="flex items-center justify-between gap-4 p-5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+              >
+                <span>
+                  <span className="block text-xs font-bold text-brand mb-1">서비스 안내</span>
+                  <span className="block font-bold">부산 CCTV 설치 자세히 보기</span>
+                </span>
+                <ArrowUpRight className="w-5 h-5 shrink-0" />
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -1007,44 +977,8 @@ export default function App() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {CASES.map((item, i) => (
-              <motion.a
-                key={item.title}
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: (i % 3) * 0.1 }}
-                className="group bg-white rounded-[2rem] border border-slate-100 overflow-hidden flex flex-col hover:border-brand/20 hover:shadow-xl transition-all duration-500"
-              >
-                <div className="aspect-[4/3] overflow-hidden bg-slate-100">
-                  <img
-                    src={item.image}
-                    alt={`${item.area} ${item.category} 현장 사진`}
-                    loading="lazy"
-                    width={800}
-                    height={600}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                </div>
-                <div className="p-8 flex flex-col flex-1">
-                  <div className="flex items-center gap-2 text-xs font-bold text-brand mb-3">
-                    <MapPin className="w-3.5 h-3.5" />
-                    {item.area} · {item.category}
-                  </div>
-                  <h4 className="text-xl font-bold text-slate-900 mb-3 tracking-tight">{item.title}</h4>
-                  <p className="text-slate-500 text-sm leading-relaxed font-medium mb-6">{item.story}</p>
-                  <div className="mt-auto flex flex-wrap gap-1.5">
-                    {item.tags.map(tag => (
-                      <span key={tag} className="text-[11px] font-bold px-2 py-1 bg-slate-50 text-slate-500 rounded">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </motion.a>
+            {CASE_PAGES.map(item => (
+              <CaseCard key={item.slug} item={item} />
             ))}
           </div>
         </div>
@@ -1081,6 +1015,10 @@ export default function App() {
         </div>
       </section>
 
+      </>) : (
+        <SubPage route={route} openForm={() => setIsFormOpen(true)} />
+      )}
+
       {/* Footer */}
       <footer className="bg-white py-24 border-t border-slate-100">
         <div className="max-w-7xl mx-auto px-6">
@@ -1097,11 +1035,11 @@ export default function App() {
               <div>
                 <h4 className="text-xs font-black text-slate-900 uppercase tracking-widest mb-8">바로가기</h4>
                 <ul className="space-y-4 text-sm font-bold text-slate-400">
-                  <li><button onClick={() => scrollToSection('services')} className="hover:text-brand transition-colors cursor-pointer">서비스 안내</button></li>
-                  <li><button onClick={() => scrollToSection('cctv')} className="hover:text-brand transition-colors cursor-pointer">CCTV 설치</button></li>
-                  <li><button onClick={() => scrollToSection('guarantee')} className="hover:text-brand transition-colors cursor-pointer">비용 안내</button></li>
-                  <li><button onClick={() => scrollToSection('process')} className="hover:text-brand transition-colors cursor-pointer">이용 절차</button></li>
-                  <li><button onClick={() => scrollToSection('cases')} className="hover:text-brand transition-colors cursor-pointer">시공 사례</button></li>
+                  <li><a href="/#services" onClick={(e) => goToSection(e, 'services')} className="hover:text-brand transition-colors">서비스 안내</a></li>
+                  <li><a href="/#cctv" onClick={(e) => goToSection(e, 'cctv')} className="hover:text-brand transition-colors">CCTV 설치</a></li>
+                  <li><a href="/#guarantee" onClick={(e) => goToSection(e, 'guarantee')} className="hover:text-brand transition-colors">비용 안내</a></li>
+                  <li><a href="/#process" onClick={(e) => goToSection(e, 'process')} className="hover:text-brand transition-colors">이용 절차</a></li>
+                  <li><a href="/#cases" onClick={(e) => goToSection(e, 'cases')} className="hover:text-brand transition-colors">시공 사례</a></li>
                   <li><a href={BUSINESS.blogUrl} target="_blank" rel="noopener noreferrer" className="hover:text-brand transition-colors">공식 블로그</a></li>
                   <li><button onClick={() => setIsTermsOpen(true)} className="hover:text-brand transition-colors cursor-pointer">이용약관</button></li>
                   <li><button onClick={() => setIsPrivacyOpen(true)} className="hover:text-brand transition-colors cursor-pointer">개인정보처리방침</button></li>
@@ -1128,6 +1066,33 @@ export default function App() {
             </div>
           </div>
           
+          <div className="grid md:grid-cols-3 gap-10 mb-16 text-sm">
+            <div>
+              <h4 className="text-xs font-black text-slate-900 uppercase tracking-widest mb-5">서비스</h4>
+              <ul className="space-y-3 font-bold text-slate-400">
+                {SERVICE_PAGES.map(sp => (
+                  <li key={sp.slug}><a href={servicePath(sp.slug)} className="hover:text-brand transition-colors">{sp.title}</a></li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-xs font-black text-slate-900 uppercase tracking-widest mb-5">출장 지역</h4>
+              <ul className="flex flex-wrap gap-x-4 gap-y-3 font-bold text-slate-400">
+                {AREA_PAGES.map(ap => (
+                  <li key={ap.slug}><a href={areaPath(ap.slug)} className="hover:text-brand transition-colors">{ap.name} 컴퓨터수리</a></li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-xs font-black text-slate-900 uppercase tracking-widest mb-5">시공 사례</h4>
+              <ul className="space-y-3 font-bold text-slate-400">
+                {CASE_PAGES.map(cp => (
+                  <li key={cp.slug}><a href={casePath(cp.slug)} className="hover:text-brand transition-colors">{cp.area} · {cp.category}</a></li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
           <div className="pt-12 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">
             <p className="normal-case tracking-normal text-[11px] leading-relaxed text-center md:text-left">
               {[

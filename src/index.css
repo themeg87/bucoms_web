@@ -11,6 +11,18 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  /* 고정 메뉴에 가려지지 않도록 */
+  section[id] {
+    scroll-margin-top: 110px;
+  }
+  /* 한글이 단어 중간에서 줄바꿈되지 않도록 */
+  body {
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
   body {
     @apply font-sans text-slate-900 bg-white antialiased selection:bg-brand/10 selection:text-brand;
   }
