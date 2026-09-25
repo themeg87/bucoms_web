@@ -10,7 +10,7 @@
 | 사이트 | https://www.bucoms.com (bucoms.com·http → www 로 308 이동) |
 | 저장소 | GitHub `themeg87/bucoms_web` (현재 Public — 사장님이 Private 로 돌릴 예정) · 로컬 `/home/pi5/share/bucoms_web` |
 | 배포 | `main` 에 push → Vercel 자동 배포 (vercel.json: `@vercel/static-build` + `server.ts` API) |
-| 구조 | React 19 + Vite + Tailwind 4 · 빌드 때 29페이지 프리렌더 · Express `server.ts`(문의 API → 텔레그램 + 구글 시트) |
+| 구조 | React 19 + Vite + Tailwind 4 · 빌드 때 30페이지 프리렌더 · Express `server.ts`(문의 API → 텔레그램 + 구글 시트) |
 | 사업자 | 부컴 · 대표 최영중 · 427-50-01058 · 부산시 동래구 동래로 117 · 010-2222-0170 · c870120@naver.com |
 | 운영 | 연중무휴 09:00-22:00 · 출장 부산·울산·김해·양산 · 출장비 10,000원(수리 시 면제) · 30일 무상 A/S |
 | 통계 | GA4 `G-BWZLZS95V8` (`src/analytics.ts`) — click_phone·click_kakao·click_blog·open_inquiry_form·submit_inquiry |
@@ -21,7 +21,7 @@
 - `src/App.tsx` — 공통 틀(메뉴·상단 띠·푸터·문의 창·떠 있는 버튼) + 홈 화면 섹션. `App({ path })` 가 주소에 따라 홈/하위 페이지.
 - `src/pages/SubPage.tsx` — 서비스·지역·시공 사례 페이지 화면.
 - `src/content/pages.ts` — 서비스 6 · 지역 16 · 사례 6 페이지 내용, 주소 목록(`ALL_PATHS`), 페이지별 제목·설명(`pageMeta`, 설명 80자 이내).
-- `src/content/blogPosts.ts` — 블로그 글 목록에서 생성(직접 수정 금지). 갱신: `python3 scripts/sync_blog_posts.py` → 빌드·배포.
+- `src/content/blogPosts.ts` — 블로그 글 목록에서 생성(직접 수정 금지): 지역·주제별 글, 사례 원본 글(`CASE_POSTS`), 전체 글(`ALL_POSTS` → `/blog/` 페이지). 갱신: `python3 scripts/sync_blog_posts.py` → 빌드·배포.
 - `src/constants/business.ts` — 사업자·연락처·운영시간·지역 (사이트 전체가 사용). `legal.ts` — 약관·개인정보처리방침.
 - `scripts/prerender.ts` — 빌드 때 페이지마다 HTML·메타·breadcrumb JSON-LD·sitemap 생성, 설명 80자 초과 시 빌드 실패.
 - `index.html` — 기본 메타, LocalBusiness JSON-LD, 네이버·구글 소유확인 태그, 글꼴(Pretendard CDN).
@@ -32,7 +32,7 @@
 
 ```bash
 cd /home/pi5/share/bucoms_web
-npx tsc --noEmit && npm run build            # 타입 검사 + 29페이지 빌드
+npx tsc --noEmit && npm run build            # 타입 검사 + 30페이지 빌드
 PORT=3977 NODE_ENV=production npx tsx server.ts   # 로컬 확인 (3000번은 ComDoctor 가 사용 중!)
 python3 scripts/sync_blog_posts.py           # 블로그 새 글 반영
 git push "https://themeg87:<토큰>@github.com/themeg87/bucoms_web.git" main   # 토큰은 파일에 저장 불가(권한 설정), 매번 URL 로
@@ -54,6 +54,8 @@ git push "https://themeg87:<토큰>@github.com/themeg87/bucoms_web.git" main   #
 - [ ] 사장님: 구글 비즈니스 프로필 등록 → 이후 리뷰 요청 QR 카드 제작
 - [ ] 사장님: 네이버 스마트플레이스 홈페이지 칸에 https://www.bucoms.com
 - [ ] 사장님: GitHub 토큰 폐기, 저장소 Private 전환 (작업이 한동안 없을 때)
+- [ ] **배포 대기**: `/blog/` 전체 글 목록 커밋 — push(토큰 필요) 후 서치콘솔에서 `/blog/` 색인 요청
+- [ ] 사례 원본 글 연결: 현재 수영 CCTV 1/6만. 동래·울산·센텀·영도·파워 글 발행 뒤 `sync_blog_posts.py` 재실행→배포 (패턴은 스크립트 `CASES`)
 - [ ] 다음 새 블로그 글에서 bucoms.com 링크 카드(oglink)가 실제로 만들어지는지 확인
 - [ ] (선택) 기존 인기·시공 사례 블로그 글 일부에 홈페이지 링크 추가, 네이버 RSS, 울산·김해·양산 페이지(글이 생기면)
 
@@ -70,3 +72,4 @@ git push "https://themeg87:<토큰>@github.com/themeg87/bucoms_web.git" main   #
 - 01:52 `0b28392` 검색 설명 80자 이내(네이버 SEO 경고 해결), 빌드 검사 추가. 사장님이 Vercel 에서 bucoms.com → www 를 308 로 변경(확인함).
 - 2026-09-26 블로그 쪽(저장소 밖): `blog_computer/tools/template/homepage.py`(주제별 홈페이지 링크·서명 WEB 줄), `check_post.py` [홈페이지] 경고, `blog_computer/CLAUDE.md`·스킬 post_format.md 규칙, `bucom_brand/brand.json` contact.website.
 - 2026-09-26 작업 기록 체계: 이 WORKLOG.md + 프로젝트 CLAUDE.md(자동 로드) + Stop 훅(기록 누락 시 갱신 요구).
+- 2026-09-26 02:50 (커밋 아래) 네이버 블로그 글 구글 색인 돕기: `/blog/` 전체 글 목록 페이지(488개 링크, sitemap 포함), 푸터·관련 글 섹션에서 `/blog/` 링크, 사례 페이지 원본 글 자동 연결(`CASE_POSTS`).

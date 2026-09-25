@@ -11,8 +11,8 @@ import { BUSINESS } from '../constants/business';
 import { KakaoIcon } from '../components/KakaoIcon';
 import { CaseCard } from '../components/CaseCard';
 import {
-  AREA_PAGES, CASE_PAGES, SERVICE_PAGES,
-  areaPath, areaPosts, blogPostUrl, casePath, findCase, findService, pageMeta, servicePath, topicPosts,
+  AREA_PAGES, BLOG_PATH, CASE_PAGES, SERVICE_PAGES,
+  allPosts, areaPath, areaPosts, blogPostUrl, caseBlogUrl, casePath, findCase, findService, pageMeta, servicePath, topicPosts,
   type AreaPage, type BlogPost, type CasePage, type Faq, type Photo, type Route, type ServicePage
 } from '../content/pages';
 
@@ -159,8 +159,8 @@ const BlogPosts = ({ title, posts }: { title: string; posts: BlogPost[] }) => {
             <div className="text-xs font-bold text-brand tracking-[0.3em] uppercase mb-4">부컴 블로그</div>
             <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter">{title}</h2>
           </div>
-          <a href={BUSINESS.blogUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-brand">
-            블로그 전체 보기 <ArrowUpRight className="w-4 h-4" />
+          <a href={BLOG_PATH} className="inline-flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-brand">
+            블로그 글 전체 목록 <ChevronRight className="w-4 h-4" />
           </a>
         </div>
         <ul className="divide-y divide-slate-200 border-y border-slate-200">
@@ -314,6 +314,7 @@ const AreaView = ({ page, openForm }: { page: AreaPage; openForm: OpenForm }) =>
 
 const CaseView = ({ page, openForm }: { page: CasePage; openForm: OpenForm }) => {
   const service = findService(page.service);
+  const blogUrl = caseBlogUrl(page);
   return (
     <>
       <PageHeader
@@ -351,8 +352,8 @@ const CaseView = ({ page, openForm }: { page: CasePage; openForm: OpenForm }) =>
                   {service.title} 안내 보기 <ArrowUpRight className="w-4 h-4" />
                 </a>
               )}
-              <a href={page.blogUrl || BUSINESS.blogUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-between gap-4 px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 font-bold text-slate-700 hover:border-brand hover:text-brand transition-colors">
-                {page.blogUrl ? "블로그에서 시공기 전체 보기" : "블로그에서 사례 더 보기"} <ArrowUpRight className="w-4 h-4" />
+              <a href={blogUrl || BLOG_PATH} {...(blogUrl ? { target: "_blank", rel: "noopener noreferrer" } : {})} className="inline-flex items-center justify-between gap-4 px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 font-bold text-slate-700 hover:border-brand hover:text-brand transition-colors">
+                {blogUrl ? "블로그에서 시공기 전체 보기" : "블로그 글 더 보기"} <ArrowUpRight className="w-4 h-4" />
               </a>
             </div>
           </div>
@@ -365,10 +366,62 @@ const CaseView = ({ page, openForm }: { page: CasePage; openForm: OpenForm }) =>
   );
 };
 
+// 블로그 글 전체 목록 — 구글이 홈페이지를 따라 네이버 블로그 글을 찾아가도록 모든 글을 링크로 둔다
+const BlogView = ({ openForm }: { openForm: OpenForm }) => {
+  const posts = allPosts();
+  const months: { month: string; posts: BlogPost[] }[] = [];
+  for (const post of posts) {
+    const month = post.date.slice(0, 7);
+    const last = months[months.length - 1];
+    if (last?.month === month) last.posts.push(post);
+    else months.push({ month, posts: [post] });
+  }
+  return (
+    <>
+      <PageHeader
+        path={BLOG_PATH}
+        label="부컴 블로그"
+        h1="부컴 블로그 글 전체 목록"
+        intro={[
+          `네이버 블로그에 올린 글 ${posts.length}개를 모았습니다. 부산 곳곳의 출장 수리·CCTV 설치 현장 이야기와 컴퓨터 고장 증상, 부품 정보 글입니다.`,
+          "제목을 누르면 네이버 블로그에서 글 전체를 볼 수 있습니다."
+        ]}
+        openForm={openForm}
+      />
+
+      <section className="pb-24 bg-white">
+        <div className="max-w-7xl mx-auto px-6 space-y-14">
+          {months.map(({ month, posts }) => (
+            <div key={month}>
+              <h2 className="text-lg font-black text-slate-900 mb-2">{month.replace("-", "년 ")}월 <span className="text-slate-400 text-sm">({posts.length})</span></h2>
+              <ul className="divide-y divide-slate-100 border-y border-slate-100">
+                {posts.map(post => (
+                  <li key={post.id}>
+                    <a href={blogPostUrl(post.id)} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-6 py-3.5 group">
+                      <span className="font-bold text-slate-700 group-hover:text-brand transition-colors">{post.title}</span>
+                      <span className="text-xs font-bold text-slate-400 shrink-0">{post.date.slice(5)}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <CaseGrid slugs={CASE_PAGES.map(c => c.slug).slice(0, 3)} />
+      <LinkGrid title="서비스 안내" links={serviceLinks} />
+      <LinkGrid title="출장 지역" links={areaLinks} />
+      <BottomCta openForm={openForm} title="컴퓨터·CCTV 문제, 부컴에 상담하세요" />
+    </>
+  );
+};
+
 export const SubPage = ({ route, openForm }: { route: Exclude<Route, { type: "home" }>; openForm: OpenForm }) => {
   switch (route.type) {
     case "service": return <ServiceView page={route.page} openForm={openForm} />;
     case "area": return <AreaView page={route.page} openForm={openForm} />;
     case "case": return <CaseView page={route.page} openForm={openForm} />;
+    case "blog": return <BlogView openForm={openForm} />;
   }
 };

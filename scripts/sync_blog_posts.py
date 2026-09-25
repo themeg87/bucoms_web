@@ -1,4 +1,5 @@
-"""네이버 블로그 글 목록(bucom_글목록.json)에서 지역·주제별 관련 글을 골라 src/content/blogPosts.ts 로 저장.
+"""네이버 블로그 글 목록(bucom_글목록.json)에서 지역·주제별 관련 글, 전체 글 목록(/blog/ 페이지),
+시공 사례 페이지의 원본 글을 골라 src/content/blogPosts.ts 로 저장.
 
 실행: python3 scripts/sync_blog_posts.py [글목록.json 경로]
 블로그 글이 늘어나면 다시 실행하고 빌드·배포하면 페이지의 '관련 블로그 글'이 갱신됩니다.
@@ -40,6 +41,15 @@ TOPICS = {
     "custom-pc": r"조립|견적|게이밍|리뷰|RTX|라이젠|메인보드|램 ",
     "nas-network": r"NAS|나스|네트워크|와이파이|인터넷|공유기|프린터|랜",
 }
+# 시공 사례 페이지 slug → 원본 블로그 글 제목에서 찾을 패턴 (예약·임시저장 글은 발행되면 다음 실행 때 연결됨)
+CASES = {
+    "dongnae-board": r"동래.*보드가 원인|동래.*갑자기 꺼짐",
+    "suyeong-cctv": r"씨메르",
+    "ulsan-gpu-board": r"울산.*(메인보드|그래픽카드)",
+    "centum-cleaning": r"센텀.*청소|청소.*센텀",
+    "yeongdo-nas": r"영도.*(NAS|나스)",
+    "power-supply": r"전원 안 켜지던 PC",
+}
 DONG_STOP = {"작동", "오작동", "자동", "이동", "연동", "활동", "변동", "행동", "구동", "진동", "동동"}
 EMOJI = re.compile("[\U0001F000-\U0001FAFF☀-➿⬀-⯿️‍⃣]")
 
@@ -75,15 +85,26 @@ for slug, pattern in AREAS.items():
     areas[slug] = {"count": len(matched), "dongs": names[:12], "posts": pick(pattern)}
 
 topics = {slug: pick(pattern) for slug, pattern in TOPICS.items()}
+cases = {}
+for slug, pattern in CASES.items():
+    found = [p for p in posts if re.search(pattern, p["제목"])]
+    if found:
+        cases[slug] = str(found[-1]["logNo"])  # 가장 먼저 발행된 글
+all_posts = [{"id": str(p["logNo"]), "title": clean(p["제목"]), "date": p["발행"][:10]} for p in posts]
+all_lines = ",\n".join("  " + json.dumps(p, ensure_ascii=False) for p in all_posts)
 
 OUT.write_text(
     "// scripts/sync_blog_posts.py 로 생성한 파일입니다. 직접 고치지 마세요.\n"
     "export interface BlogPost { id: string; title: string; date: string }\n\n"
     f"export const AREA_POSTS: Record<string, {{ count: number; dongs: string[]; posts: BlogPost[] }}> = {json.dumps(areas, ensure_ascii=False, indent=2)};\n\n"
-    f"export const TOPIC_POSTS: Record<string, BlogPost[]> = {json.dumps(topics, ensure_ascii=False, indent=2)};\n",
+    f"export const TOPIC_POSTS: Record<string, BlogPost[]> = {json.dumps(topics, ensure_ascii=False, indent=2)};\n\n"
+    f"export const CASE_POSTS: Record<string, string> = {json.dumps(cases, ensure_ascii=False, indent=2)};\n\n"
+    f"export const ALL_POSTS: BlogPost[] = [\n{all_lines}\n];\n",
     encoding="utf-8",
 )
 for slug, a in areas.items():
     print(f"{slug:10} 글 {a['count']:3}  동네: {' '.join(a['dongs'])}")
+print(f"사례 원본 글 {len(cases)}/{len(CASES)}: {cases}")
+print(f"전체 글 {len(all_posts)}개")
 for slug, t in topics.items():
     print(f"{slug:18} {len(t)}  예) {t[0]['title'][:40] if t else '-'}")

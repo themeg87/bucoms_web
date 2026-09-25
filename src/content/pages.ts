@@ -7,7 +7,7 @@
 // 사실은 블로그 원고(사장님이 알려 준 내용)와 사이트에 이미 공개한 정보만 사용합니다.
 
 import { BUSINESS } from '../constants/business';
-import { AREA_POSTS, TOPIC_POSTS, type BlogPost } from './blogPosts';
+import { ALL_POSTS, AREA_POSTS, CASE_POSTS, TOPIC_POSTS, type BlogPost } from './blogPosts';
 
 export type { BlogPost };
 
@@ -370,17 +370,22 @@ export const findService = (slug: string) => SERVICE_PAGES.find(s => s.slug === 
 export const areaPosts = (slug: string) => AREA_POSTS[slug] || { count: 0, dongs: [], posts: [] };
 export const topicPosts = (slug: string): BlogPost[] => TOPIC_POSTS[slug] || [];
 export const blogPostUrl = (id: string) => `${BUSINESS.blogUrl}/${id}`;
+export const allPosts = (): BlogPost[] => ALL_POSTS;
+// 사례의 원본 블로그 글: 직접 적은 주소 → 없으면 sync_blog_posts.py 가 제목으로 찾은 글
+export const caseBlogUrl = (c: CasePage) => c.blogUrl || (CASE_POSTS[c.slug] ? blogPostUrl(CASE_POSTS[c.slug]) : undefined);
 
 // 주소 → 화면 종류
 export type Route =
   | { type: "home" }
   | { type: "service"; page: ServicePage }
   | { type: "area"; page: AreaPage }
-  | { type: "case"; page: CasePage };
+  | { type: "case"; page: CasePage }
+  | { type: "blog" };
 
 export const servicePath = (slug: string) => `/services/${slug}/`;
 export const areaPath = (slug: string) => `/area/${slug}/`;
 export const casePath = (slug: string) => `/cases/${slug}/`;
+export const BLOG_PATH = "/blog/";
 
 export function resolveRoute(pathname: string): Route {
   const [kind, slug] = pathname.replace(/^\/+|\/+$/g, "").split("/");
@@ -392,6 +397,7 @@ export function resolveRoute(pathname: string): Route {
     const page = AREA_PAGES.find(a => a.slug === slug);
     if (page) return { type: "area", page };
   }
+  if (kind === "blog" && !slug) return { type: "blog" };
   if (kind === "cases") {
     const page = findCase(slug);
     if (page) return { type: "case", page };
@@ -403,7 +409,8 @@ export const ALL_PATHS = [
   "/",
   ...SERVICE_PAGES.map(s => servicePath(s.slug)),
   ...AREA_PAGES.map(a => areaPath(a.slug)),
-  ...CASE_PAGES.map(c => casePath(c.slug))
+  ...CASE_PAGES.map(c => casePath(c.slug)),
+  BLOG_PATH
 ];
 
 // 검색 결과 설명은 네이버 권장에 맞춰 80자 이내 (scripts/prerender.ts 에서 검사)
@@ -446,6 +453,14 @@ export function pageMeta(pathname: string) {
         description: caseDescription(route.page),
         image: route.page.photos[0]?.src,
         breadcrumbs: [home, { name: "시공 사례", path: "/#cases" }, { name: route.page.title, path: casePath(route.page.slug) }]
+      };
+    case "blog":
+      return {
+        path: BLOG_PATH,
+        title: "블로그 글 전체 목록 | 부컴 BUCOM",
+        description: "부컴 블로그 글 전체 목록. 부산 컴퓨터 출장수리·CCTV 설치 현장 이야기와 컴퓨터 정보를 모았습니다.",
+        image: undefined,
+        breadcrumbs: [home, { name: "블로그 글 목록", path: BLOG_PATH }]
       };
     default:
       return {
