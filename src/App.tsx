@@ -430,6 +430,13 @@ export default function App({ path = "/" }: { path?: string }) {
             >
               공식 블로그
             </a>
+            <a
+              href={ESTIMATE_PATH}
+              className="border-2 border-brand text-brand px-5 py-2.5 rounded-full text-sm font-bold hover:bg-brand hover:text-white transition-all flex items-center gap-2 whitespace-nowrap"
+            >
+              <Cpu className="w-4 h-4" />
+              PC 견적
+            </a>
             <button 
               onClick={() => setIsFormOpen(true)}
               className="bg-slate-900 text-white px-6 py-3 rounded-full text-sm font-bold hover:bg-brand transition-all flex items-center gap-2 shadow-xl shadow-slate-900/10 active:scale-95 cursor-pointer whitespace-nowrap"
@@ -439,10 +446,16 @@ export default function App({ path = "/" }: { path?: string }) {
             </button>
           </div>
 
-          {/* Mobile Menu Toggle */}
-          <button className="lg:hidden p-2 text-slate-900" aria-label={isMenuOpen ? "메뉴 닫기" : "메뉴 열기"} aria-expanded={isMenuOpen} onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          {/* Mobile: PC 견적 바로가기 + 메뉴 버튼 */}
+          <div className="lg:hidden flex items-center gap-2">
+          <a href={ESTIMATE_PATH} className="bg-brand text-white px-4 py-2 rounded-full text-xs font-black flex items-center gap-1.5 shadow-lg shadow-brand/20">
+            <Cpu className="w-3.5 h-3.5" />
+            PC 견적
+          </a>
+          <button className="p-2 text-slate-900" aria-label={isMenuOpen ? "메뉴 닫기" : "메뉴 열기"} aria-expanded={isMenuOpen} onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <X /> : <Menu />}
           </button>
+          </div>
         </div>
       </nav>
 
@@ -483,6 +496,14 @@ export default function App({ path = "/" }: { path?: string }) {
               {/* Menu Items */}
               <div className="flex-1 overflow-y-auto p-6">
                 <div className="flex flex-col gap-2">
+                  <a
+                    href={ESTIMATE_PATH}
+                    className="flex items-center gap-4 w-full text-lg font-black text-white text-left py-4 px-4 rounded-2xl bg-brand shadow-lg shadow-brand/20 mb-2"
+                  >
+                    <Cpu className="w-5 h-5" />
+                    PC 견적 요청
+                    <ArrowRight className="w-5 h-5 ml-auto" />
+                  </a>
                   {[
                     { id: 'services', label: '서비스 안내', icon: Zap },
                     { id: 'cctv', label: 'CCTV 설치', icon: Cctv },
@@ -670,6 +691,27 @@ export default function App({ path = "/" }: { path?: string }) {
               </div>
             ))}
           </div>
+
+          <a
+            href={ESTIMATE_PATH}
+            className="group mt-8 flex flex-col md:flex-row md:items-center justify-between gap-8 p-10 md:p-14 rounded-[3rem] bg-brand text-white shadow-2xl shadow-brand/20 hover:bg-slate-900 transition-colors"
+          >
+            <div className="flex items-start gap-6">
+              <div className="w-16 h-16 rounded-2xl bg-white/15 flex items-center justify-center shrink-0">
+                <Cpu className="w-8 h-8" />
+              </div>
+              <div>
+                <div className="text-xs font-bold tracking-[0.3em] uppercase text-white/70 mb-3">PC 견적</div>
+                <div className="text-3xl md:text-4xl font-black tracking-tight mb-3">나만의 PC 견적 받기</div>
+                <p className="text-white/80 leading-relaxed max-w-xl">
+                  용도와 예산만 알려 주세요. 다나와 가격 기준으로 부품을 골라 견적서를 링크로 보내 드립니다.
+                </p>
+              </div>
+            </div>
+            <span className="inline-flex items-center justify-center gap-2 px-8 py-5 rounded-2xl bg-white text-slate-900 font-black shrink-0 group-hover:scale-105 transition-transform">
+              견적 요청하기 <ArrowRight className="w-5 h-5" />
+            </span>
+          </a>
         </div>
       </section>
 
