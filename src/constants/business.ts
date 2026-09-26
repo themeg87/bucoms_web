@@ -12,7 +12,7 @@ export const BUSINESS = {
   address: "부산시 동래구 동래로 117",           // 사업장 주소
   email: "c870120@naver.com",           // 대표 이메일
   phone: "010-2222-0170",
-  hours: "연중무휴 09:00 - 22:00",
+  hours: "연중무휴 10:00 - 22:00",
   serviceArea: "부산·울산·김해·양산",
   warrantyDays: 30,
   kakaoUrl: "https://pf.kakao.com/_nsgen/chat",
