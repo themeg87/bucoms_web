@@ -87,4 +87,4 @@ git push origin main                         # 토큰은 ~/.config/git/bucoms_cr
 - 2026-09-26 `c8884f8` PC 견적 요청 페이지 /pc-estimate/ (용도·예산·게임/프로그램·추가 품목 → 문의 API kind=pc-estimate). 조립PC 서비스 페이지 배너·푸터 링크. 사장님이 견적 도구(bench_mark_danawa)로 견적서 링크를 보내는 흐름.
 - 2026-09-26 `d4eb446` PC 견적 눈에 띄게: 상단 메뉴 'PC 견적' 버튼(파란 테두리), 휴대폰 헤더 버튼·메뉴 맨 위 강조, 홈 서비스 안내 아래 파란 배너 '나만의 PC 견적 받기'.
 - 2026-09-26 `4e253bc` 자동 초안 견적: PC 견적 요청을 파이 견적 서버(/api/estimate-request, 비밀키)로 전달(연락처 제외). 파이 쪽 bench_mark_danawa/auto/ (worker.py cron 1분, quote_tool.py, RULES.md) 가 Claude 로 초안 → @bucom_homepage_bot 으로 링크.
-- 2026-09-26 (커밋 아래) 견적 요청에 '원하는 부품이 있어요'(부품 9칸 + 참고 견적 링크) 추가, 요청 내용 최대 2000자. 자동 초안은 손님 지정 부품 우선(RULES.md).
+- 2026-09-26 `4f314a4` 견적 요청에 '원하는 부품이 있어요'(부품 9칸 + 참고 견적 링크) 추가, 요청 내용 최대 2000자. 자동 초안은 손님 지정 부품 우선(RULES.md).
