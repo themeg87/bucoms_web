@@ -35,7 +35,7 @@ cd /home/pi5/share/bucoms_web
 npx tsc --noEmit && npm run build            # 타입 검사 + 30페이지 빌드
 PORT=3977 NODE_ENV=production npx tsx server.ts   # 로컬 확인 (3000번은 ComDoctor 가 사용 중!)
 python3 scripts/sync_blog_posts.py           # 블로그 새 글 반영
-git push "https://themeg87:<토큰>@github.com/themeg87/bucoms_web.git" main   # 토큰은 파일에 저장 불가(권한 설정), 매번 URL 로
+git push origin main                         # 토큰은 ~/.config/git/bucoms_credentials (저장소 전용 credential.helper, 600)
 ```
 - 테스트 서버 끌 때 `pkill -f "tsx server.ts"` 금지(내 셸까지 죽음) → `ss -ltnp | grep :3977` 로 PID 찾아 kill.
 - 화면 확인: headless chromium 또는 Playwright(`/home/pi5/share/blog_cctv/naver_auto/.venv/bin/python`). GA 요청은 route.abort 로 막고 테스트.
@@ -53,9 +53,9 @@ git push "https://themeg87:<토큰>@github.com/themeg87/bucoms_web.git" main   #
 - [x] 사장님: 실제 문의 → 텔레그램 도착 확인 (2026-09-26)
 - [ ] 사장님: 구글 비즈니스 프로필 등록 → 이후 리뷰 요청 QR 카드 제작
 - [ ] 사장님: 네이버 스마트플레이스 홈페이지 칸에 https://www.bucoms.com
-- [ ] 사장님: GitHub 토큰 폐기, 저장소 Private 전환 (작업이 한동안 없을 때)
+- [ ] 사장님: 저장소 Private 전환 (토큰은 저장해 두고 계속 씀)
 - [x] 사장님: 서치콘솔 `/blog/` 색인 요청·정상 등록 (2026-09-26)
-- [ ] 사장님: 대화에 붙여 넣은 GitHub 토큰은 작업 끝나면 폐기
+- [x] GitHub 토큰 저장(2026-09-26, 홈 폴더·권한 600). 만료되면 새 토큰으로 `git credential approve` (허용 규칙 `Bash(git credential:*)`)
 - [ ] 사례 원본 글 연결: 현재 수영 CCTV 1/6만. 동래·울산·센텀·영도·파워 글 발행 뒤 `sync_blog_posts.py` 재실행→배포 (패턴은 스크립트 `CASES`)
 - [ ] 다음 새 블로그 글에서 bucoms.com 링크 카드(oglink)가 실제로 만들어지는지 확인
 - [ ] (선택) 기존 인기·시공 사례 블로그 글 일부에 홈페이지 링크 추가, 네이버 RSS, 울산·김해·양산 페이지(글이 생기면)
