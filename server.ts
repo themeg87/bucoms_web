@@ -137,7 +137,7 @@ async function startServer() {
     const name = clean(body.name, 30);
     const phone = clean(body.phone, 20);
     const address = clean(body.address, 200);
-    const description = clean(body.description, 1000);
+    const description = clean(body.description, 2000); // PC 견적은 원하는 부품 목록까지 들어와 길 수 있음
     // kind: "pc-estimate" = 홈페이지 PC 견적 요청 페이지(/pc-estimate/), 그 외 = 수리 문의
     const isEstimate = body.kind === "pc-estimate";
 

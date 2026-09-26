@@ -14,7 +14,21 @@ const PURPOSES = ["사무·인강", "게임", "영상·디자인 작업", "기�
 const BUDGETS = ["70만 원 이하", "70~100만 원", "100~150만 원", "150~200만 원", "200만 원 이상", "상담 후 결정"];
 const EXTRAS = ["모니터", "키보드·마우스", "윈도우 설치", "쓰던 PC 부품 재사용·업그레이드 상담"];
 
-const EMPTY = { purpose: "", budget: "", programs: "", extras: [] as string[], name: "", phone: "", address: "", note: "", website: "" };
+// 손님이 원하는 부품을 직접 적는 칸 (선택). 비워 둔 부품은 부컴이 골라 드림
+const PARTS: { key: string; label: string; example: string }[] = [
+  { key: "CPU", label: "CPU", example: "예) 라이젠5 7500F" },
+  { key: "그래픽카드", label: "그래픽카드", example: "예) RTX 5060 Ti 16GB" },
+  { key: "메인보드", label: "메인보드", example: "예) B650M" },
+  { key: "메모리", label: "메모리(램)", example: "예) DDR5 32GB (16G×2)" },
+  { key: "SSD", label: "SSD", example: "예) 삼성 990 PRO 1TB" },
+  { key: "파워", label: "파워", example: "예) 750W 골드" },
+  { key: "케이스", label: "케이스", example: "예) 흰색 어항 케이스" },
+  { key: "쿨러", label: "CPU 쿨러", example: "예) 360 수냉" },
+  { key: "모니터", label: "모니터", example: "예) 27인치 QHD 165Hz" },
+];
+
+const EMPTY = { purpose: "", budget: "", programs: "", extras: [] as string[], parts: {} as Record<string, string>, link: "",
+  name: "", phone: "", address: "", note: "", website: "" };
 
 const inputClass = "w-full bg-slate-50 border-none rounded-2xl px-6 py-4 text-slate-900 placeholder:text-slate-300 focus:ring-2 focus:ring-brand transition-all outline-none";
 
@@ -50,6 +64,7 @@ const Chips = ({ name, options, value, onPick, multi = false }: {
 export const EstimateForm = () => {
   const [form, setForm] = useState(EMPTY);
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
+  const [showParts, setShowParts] = useState(false);
   const [error, setError] = useState("");
 
   const toggleExtra = (v: string) =>
@@ -64,12 +79,15 @@ export const EstimateForm = () => {
     }
     setStatus("sending");
     setError("");
+    const chosen = PARTS.filter(p => form.parts[p.key]?.trim()).map(p => `- ${p.key}: ${form.parts[p.key].trim()}`);
     const description = [
       `용도: ${form.purpose}`,
       `예산(본체): ${form.budget}`,
       `게임·프로그램: ${form.programs || "없음"}`,
       `추가: ${form.extras.join(", ") || "없음"}`,
       `요청사항: ${form.note || "없음"}`,
+      ...(chosen.length ? ["원하는 부품:", ...chosen] : []),
+      ...(form.link.trim() ? [`참고 견적 링크: ${form.link.trim()}`] : []),
     ].join("\n");
     try {
       const res = await fetch("/api/inquiry", {
@@ -119,6 +137,35 @@ export const EstimateForm = () => {
       <Field label="같이 필요한 것 (여러 개 선택)">
         <Chips name="추가 품목" options={EXTRAS} value={form.extras} onPick={toggleExtra} multi />
       </Field>
+
+      <div className="rounded-[1.5rem] border border-slate-200">
+        <button type="button" aria-expanded={showParts} onClick={() => setShowParts(v => !v)}
+          className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left">
+          <span>
+            <span className="block text-sm font-black text-slate-900">원하는 부품이 있어요 (선택)</span>
+            <span className="block text-xs text-slate-500 mt-1">정해 둔 부품만 적어 주세요. 비워 둔 부품은 부컴이 맞춰 골라 드려요.</span>
+          </span>
+          <span className="text-brand font-black text-xl shrink-0">{showParts ? "−" : "+"}</span>
+        </button>
+        {showParts && (
+          <div className="px-6 pb-6 space-y-4">
+            <div className="grid sm:grid-cols-2 gap-4">
+              {PARTS.map(p => (
+                <div key={p.key}>
+                  <label htmlFor={`est-part-${p.key}`} className="block text-xs font-bold text-slate-600 mb-2">{p.label}</label>
+                  <input id={`est-part-${p.key}`} type="text" maxLength={80} placeholder={p.example} className={inputClass}
+                    value={form.parts[p.key] || ""} onChange={e => setForm({ ...form, parts: { ...form.parts, [p.key]: e.target.value } })} />
+                </div>
+              ))}
+            </div>
+            <div>
+              <label htmlFor="est-link" className="block text-xs font-bold text-slate-600 mb-2">다른 곳에서 짠 견적 링크 (다나와·컴퓨존 등)</label>
+              <input id="est-link" type="url" maxLength={300} placeholder="https://..." className={inputClass}
+                value={form.link} onChange={e => setForm({ ...form, link: e.target.value })} />
+            </div>
+          </div>
+        )}
+      </div>
 
       <div className="grid sm:grid-cols-2 gap-6">
         <Field id="est-name" label="이름 *">
