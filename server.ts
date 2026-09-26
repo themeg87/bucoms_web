@@ -80,6 +80,22 @@ async function sendTelegram(text: string) {
   }
 }
 
+// PC 견적 요청을 파이(견적 서버)로 넘겨 자동 초안 견적을 만들게 한다.
+// ESTIMATE_HOOK_URL·ESTIMATE_HOOK_SECRET 은 Vercel 환경변수에만 둔다(저장소 공개). 없으면 넘기지 않는다.
+// 연락처는 넘기지 않는다(초안 견적에 필요 없음, 사장님 텔레그램 알림에만).
+async function forwardEstimate(data: { name: string; address: string; description: string }) {
+  const url = process.env.ESTIMATE_HOOK_URL;
+  const secret = process.env.ESTIMATE_HOOK_SECRET;
+  if (!url || !secret) return;
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Hook-Secret": secret },
+    body: JSON.stringify(data),
+    signal: AbortSignal.timeout(5000),
+  });
+  if (!response.ok) throw new Error(`견적 초안 요청 전달 실패 (${response.status})`);
+}
+
 // 같은 IP에서 짧은 시간에 반복 접수하는 스팸 차단 (인스턴스별 메모리 기준)
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX = 5;
@@ -142,10 +158,12 @@ ${isEstimate ? "지역" : "주소"}: ${address}
     `.trim();
 
     // 텔레그램 알림과 시트 기록은 서로 독립적으로 시도 (한쪽이 실패해도 다른 쪽은 진행)
-    const [telegramResult, sheetsResult] = await Promise.allSettled([
+    const [telegramResult, sheetsResult, hookResult] = await Promise.allSettled([
       sendTelegram(message),
       appendToGoogleSheet({ name, phone, address, description: isEstimate ? `[PC견적] ${description}` : description }),
+      isEstimate ? forwardEstimate({ name, address, description }) : Promise.resolve(),
     ]);
+    if (hookResult.status === "rejected") console.error("Estimate Hook Error:", hookResult.reason?.message);
 
     if (telegramResult.status === "rejected") console.error("Telegram Error:", telegramResult.reason?.message);
     if (sheetsResult.status === "rejected") console.error("Sheets Error:", sheetsResult.reason?.message);
