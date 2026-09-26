@@ -79,4 +79,4 @@ git push origin main                         # 토큰은 ~/.config/git/bucoms_cr
 - 2026-09-26 13:20 "부산컴퓨터수리" 검색 대응: 홈·컴퓨터수리 페이지 제목·h1·설명에 "부산 컴퓨터수리" 정확 문구, LocalBusiness JSON-LD 에 knowsAbout·hasOfferCatalog(서비스 6)·sameAs(blog.bucoms.com), 서비스 페이지 6개에 Service + FAQPage JSON-LD(`pageMeta().structuredData` → prerender). geo 는 정확한 좌표가 없어 생략.
 - 2026-09-26 `cee5745` 가격 개편 반영: 홈 비용 안내 4칸(출장비·청소·간단한 수리·기본 공임비), 컴퓨터수리 페이지 가격 4항목, 그 외 비용은 점검 후 안내.
 - 2026-09-26 `79600ea` 가격 통일: JSON-LD priceRange 갱신. (저장소 밖) 네이버 스마트플레이스 가격정보 '상담후측정' → 출장비·청소·간단한 수리·기본 공임비·그 외 5항목 + 가격표 사진. 블로그 글(청소 55,000)·견적 사이트(조립 공임 55,000)는 이미 같음.
-- 2026-09-26 (커밋 아래) 영업시간 09:00 → 10:00 (사장님 지정, 당근·네이버와 통일): business.ts hours, JSON-LD opens.
+- 2026-09-26 `477189c` 영업시간 09:00 → 10:00 (사장님 지정, 당근·네이버와 통일): business.ts hours, JSON-LD opens.
