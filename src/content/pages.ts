@@ -211,7 +211,9 @@ export const SERVICE_PAGES: ServicePage[] = [
     ],
     prices: [
       { label: "출장비", value: "10,000원", note: "수리 진행 시 면제" },
-      { label: "수리비", value: "점검 후 견적", note: "비용 안내 후 동의 시에만 진행" }
+      { label: "간단한 수리", value: "55,000원", note: "점검 후 바로 해결되는 간단한 고장" },
+      { label: "기본 공임비", value: "55,000원", note: "부품 교체·설치 등 기본 작업, 부품값 별도" },
+      { label: "그 외 수리·부품 교체", value: "점검 후 안내", note: "비용 안내 후 동의 시에만 진행" }
     ],
     faqs: [
       ...COMMON_REPAIR_FAQS,

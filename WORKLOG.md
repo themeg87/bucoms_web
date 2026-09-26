@@ -13,6 +13,7 @@
 | 구조 | React 19 + Vite + Tailwind 4 · 빌드 때 30페이지 프리렌더 · Express `server.ts`(문의 API → 텔레그램 + 구글 시트) |
 | 사업자 | 부컴 · 대표 최영중 · 427-50-01058 · 부산시 동래구 동래로 117 · 010-2222-0170 · c870120@naver.com |
 | 운영 | 연중무휴 09:00-22:00 · 출장 부산·울산·김해·양산 · 출장비 10,000원(수리 시 면제) · 30일 무상 A/S |
+| 가격 | (사장님 지정 2026-09-26) 출장비 10,000 · 청소 55,000 · 간단한 수리 55,000 · 기본 공임비 55,000 · 그 외 수리·부품 교체 점검 후 안내 — 당근 가격표와 같게 유지 |
 | 통계 | GA4 `G-BWZLZS95V8` (`src/analytics.ts`) — click_phone·click_kakao·click_blog·open_inquiry_form·submit_inquiry |
 | 검색 등록 | 구글 서치콘솔(URL 접두어 https://www.bucoms.com/) · 네이버 서치어드바이저 — 둘 다 사이트맵 제출 완료 |
 
@@ -76,3 +77,4 @@ git push origin main                         # 토큰은 ~/.config/git/bucoms_cr
 - 2026-09-26 02:50 `4d78146` 네이버 블로그 글 구글 색인 돕기: `/blog/` 전체 글 목록 페이지(488개 링크, sitemap 포함), 푸터·관련 글 섹션에서 `/blog/` 링크, 사례 페이지 원본 글 자동 연결(`CASE_POSTS`). 배포 확인(실서버 488개 링크·sitemap).
 - 2026-09-26 (저장소 밖) 당근 비즈프로필 자동 게시(`/home/pi5/share/daangn_biz`, 화·금 11:00) 시작, 프로필 정보(공지·소개·영업시간·링크·가격·로고)를 부컴 기준으로 수정, 이름 변경 검수 중.
 - 2026-09-26 13:20 "부산컴퓨터수리" 검색 대응: 홈·컴퓨터수리 페이지 제목·h1·설명에 "부산 컴퓨터수리" 정확 문구, LocalBusiness JSON-LD 에 knowsAbout·hasOfferCatalog(서비스 6)·sameAs(blog.bucoms.com), 서비스 페이지 6개에 Service + FAQPage JSON-LD(`pageMeta().structuredData` → prerender). geo 는 정확한 좌표가 없어 생략.
+- 2026-09-26 (커밋 아래) 가격 개편 반영: 홈 비용 안내 4칸(출장비·청소·간단한 수리·기본 공임비), 컴퓨터수리 페이지 가격 4항목, 그 외 비용은 점검 후 안내.

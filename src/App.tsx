@@ -846,7 +846,7 @@ export default function App({ path = "/" }: { path?: string }) {
             ))}
           </div>
           
-          <div className="mt-16 grid md:grid-cols-3 gap-6">
+          <div className="mt-16 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
                 title: "출장비",
@@ -861,10 +861,16 @@ export default function App({ path = "/" }: { path?: string }) {
                 detail: "오염도·작업 난이도에 따라 추가 비용이 생길 수 있고, 청소가 불가능할 만큼 오염이 심하면 케이스 교체를 안내해 드립니다."
               },
               {
-                title: "수리 · 설치",
-                price: "점검 후 견적",
-                note: "부품 교체, 윈도우 설치, 데이터 복구, 네트워크·NAS·CCTV 설치 등",
-                detail: "증상과 필요한 부품에 따라 달라서, 점검 후 비용을 먼저 안내하고 동의하신 경우에만 진행합니다."
+                title: "간단한 수리",
+                price: "55,000원",
+                note: "점검 후 바로 해결되는 간단한 고장 수리입니다.",
+                detail: "점검으로 원인을 찾은 뒤 비용을 먼저 안내하고, 동의하신 경우에만 진행합니다."
+              },
+              {
+                title: "기본 공임비",
+                price: "55,000원",
+                note: "부품 교체·설치 등 기본 작업 공임입니다.",
+                detail: "부품값은 별도이며, 교체 전에 먼저 안내해 드립니다."
               }
             ].map(item => (
               <div key={item.title} className="p-8 rounded-[2rem] border border-slate-100 bg-white flex flex-col">
@@ -882,7 +888,7 @@ export default function App({ path = "/" }: { path?: string }) {
                 <CheckCircle2 className="w-6 h-6" />
               </div>
               <p className="font-bold text-slate-900">
-                정확한 비용은 점검 후, 수리 전에 먼저 안내해 드립니다.
+                그 외 수리·부품 교체 비용은 점검 후, 수리 전에 먼저 안내해 드립니다.
               </p>
             </div>
             <a href={BUSINESS.kakaoUrl} target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-brand transition-colors shadow-xl whitespace-nowrap">
