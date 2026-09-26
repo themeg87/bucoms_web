@@ -43,7 +43,7 @@ import { track } from './analytics';
 import { KakaoIcon } from './components/KakaoIcon';
 import { CaseCard } from './components/CaseCard';
 import { SubPage } from './pages/SubPage';
-import { AREA_PAGES, BLOG_PATH, CASE_PAGES, SERVICE_PAGES, areaPath, casePath, resolveRoute, servicePath } from './content/pages';
+import { AREA_PAGES, BLOG_PATH, CASE_PAGES, ESTIMATE_PATH, SERVICE_PAGES, areaPath, casePath, resolveRoute, servicePath } from './content/pages';
 import Markdown from 'react-markdown';
 
 const SERVICES = [
@@ -1048,6 +1048,7 @@ export default function App({ path = "/" }: { path?: string }) {
                   <li><a href="/#cases" onClick={(e) => goToSection(e, 'cases')} className="hover:text-brand transition-colors">시공 사례</a></li>
                   <li><a href={BUSINESS.blogUrl} target="_blank" rel="noopener noreferrer" className="hover:text-brand transition-colors">공식 블로그</a></li>
                   <li><a href={BLOG_PATH} className="hover:text-brand transition-colors">블로그 글 목록</a></li>
+                  <li><a href={ESTIMATE_PATH} className="hover:text-brand transition-colors">PC 견적 요청</a></li>
                   <li><button onClick={() => setIsTermsOpen(true)} className="hover:text-brand transition-colors cursor-pointer">이용약관</button></li>
                   <li><button onClick={() => setIsPrivacyOpen(true)} className="hover:text-brand transition-colors cursor-pointer">개인정보처리방침</button></li>
                 </ul>

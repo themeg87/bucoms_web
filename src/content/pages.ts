@@ -382,12 +382,14 @@ export type Route =
   | { type: "service"; page: ServicePage }
   | { type: "area"; page: AreaPage }
   | { type: "case"; page: CasePage }
-  | { type: "blog" };
+  | { type: "blog" }
+  | { type: "estimate" };
 
 export const servicePath = (slug: string) => `/services/${slug}/`;
 export const areaPath = (slug: string) => `/area/${slug}/`;
 export const casePath = (slug: string) => `/cases/${slug}/`;
 export const BLOG_PATH = "/blog/";
+export const ESTIMATE_PATH = "/pc-estimate/";
 
 export function resolveRoute(pathname: string): Route {
   const [kind, slug] = pathname.replace(/^\/+|\/+$/g, "").split("/");
@@ -400,6 +402,7 @@ export function resolveRoute(pathname: string): Route {
     if (page) return { type: "area", page };
   }
   if (kind === "blog" && !slug) return { type: "blog" };
+  if (kind === "pc-estimate" && !slug) return { type: "estimate" };
   if (kind === "cases") {
     const page = findCase(slug);
     if (page) return { type: "case", page };
@@ -412,7 +415,8 @@ export const ALL_PATHS = [
   ...SERVICE_PAGES.map(s => servicePath(s.slug)),
   ...AREA_PAGES.map(a => areaPath(a.slug)),
   ...CASE_PAGES.map(c => casePath(c.slug)),
-  BLOG_PATH
+  BLOG_PATH,
+  ESTIMATE_PATH
 ];
 
 // 검색 결과 설명은 네이버 권장에 맞춰 80자 이내 (scripts/prerender.ts 에서 검사)
@@ -482,6 +486,14 @@ export function pageMeta(pathname: string) {
         description: caseDescription(route.page),
         image: route.page.photos[0]?.src,
         breadcrumbs: [home, { name: "시공 사례", path: "/#cases" }, { name: route.page.title, path: casePath(route.page.slug) }]
+      };
+    case "estimate":
+      return {
+        path: ESTIMATE_PATH,
+        title: "부산 조립PC 견적 요청 | 부컴 BUCOM",
+        description: "용도와 예산만 알려 주세요. 부컴이 다나와 가격 기준으로 조립PC 견적서를 만들어 링크로 보내 드립니다.",
+        image: "/hero/02-nude-test.jpg",
+        breadcrumbs: [home, { name: "조립PC·업그레이드", path: servicePath("custom-pc") }, { name: "PC 견적 요청", path: ESTIMATE_PATH }]
       };
     case "blog":
       return {

@@ -10,8 +10,9 @@ import { ArrowUpRight, CheckCircle2, ChevronRight, MapPin, MessageSquare, Phone 
 import { BUSINESS } from '../constants/business';
 import { KakaoIcon } from '../components/KakaoIcon';
 import { CaseCard } from '../components/CaseCard';
+import { EstimateForm } from './EstimateForm';
 import {
-  AREA_PAGES, BLOG_PATH, CASE_PAGES, SERVICE_PAGES,
+  AREA_PAGES, BLOG_PATH, CASE_PAGES, ESTIMATE_PATH, SERVICE_PAGES,
   allPosts, areaPath, areaPosts, blogPostUrl, caseBlogUrl, casePath, findCase, findService, pageMeta, servicePath, topicPosts,
   type AreaPage, type BlogPost, type CasePage, type Faq, type Photo, type Route, type ServicePage
 } from '../content/pages';
@@ -210,6 +211,59 @@ const BottomCta = ({ openForm, title }: { openForm: OpenForm; title: string }) =
 const serviceLinks = SERVICE_PAGES.map(s => ({ href: servicePath(s.slug), label: s.title }));
 const areaLinks = AREA_PAGES.map(a => ({ href: areaPath(a.slug), label: `${a.name} 컴퓨터수리` }));
 
+const EstimateBanner = () => (
+  <section className="py-16 bg-white">
+    <div className="max-w-7xl mx-auto px-6">
+      <a href={ESTIMATE_PATH} className="group flex flex-col md:flex-row md:items-center justify-between gap-6 p-10 rounded-[2rem] bg-slate-900 text-white hover:bg-brand transition-colors">
+        <div>
+          <div className="text-xs font-bold tracking-[0.3em] uppercase text-slate-400 group-hover:text-white/70 mb-3">PC 견적</div>
+          <div className="text-2xl md:text-3xl font-black tracking-tight mb-2">용도와 예산만 알려 주세요</div>
+          <p className="text-slate-400 group-hover:text-white/80">부품을 골라 견적서를 만들어 휴대폰으로 볼 수 있는 링크로 보내 드립니다.</p>
+        </div>
+        <span className="inline-flex items-center gap-2 px-7 py-4 rounded-2xl bg-white text-slate-900 font-black shrink-0">
+          견적 요청하기 <ArrowUpRight className="w-5 h-5" />
+        </span>
+      </a>
+    </div>
+  </section>
+);
+
+const EstimateView = ({ openForm }: { openForm: OpenForm }) => (
+  <>
+    <PageHeader
+      path={ESTIMATE_PATH}
+      label="조립PC 견적"
+      h1="PC 견적 요청"
+      intro={[
+        "쓰시는 용도와 예산을 알려 주시면, 부컴이 다나와 가격을 기준으로 부품을 골라 견적서를 만들어 드립니다.",
+        "견적서는 휴대폰으로 볼 수 있는 링크로 보내 드리고, 확인하신 뒤 조립·설치까지 진행할 수 있어요."
+      ]}
+      openForm={openForm}
+    />
+    <section className="pb-24 bg-white">
+      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-12 gap-12">
+        <div className="lg:col-span-7">
+          <EstimateForm />
+        </div>
+        <aside className="lg:col-span-5 space-y-4">
+          {[
+            { title: "1. 견적 요청", desc: "이 페이지에서 용도·예산을 보내 주세요. 궁금한 점은 전화나 카톡으로 여쭤볼게요." },
+            { title: "2. 견적서 링크", desc: "부품 목록과 가격이 담긴 견적서를 링크로 보내 드립니다. 부품 가격은 시세에 따라 바뀔 수 있어 7일 동안 유효해요." },
+            { title: "3. 조립·설치", desc: "확정하시면 조립하고 테스트까지 마친 뒤 설치해 드립니다. 조립 공임은 기본 55,000원이에요." }
+          ].map(s => (
+            <div key={s.title} className="p-7 rounded-2xl bg-slate-50 border border-slate-100">
+              <h3 className="font-black text-lg text-slate-900 mb-2">{s.title}</h3>
+              <p className="text-sm text-slate-500 leading-relaxed">{s.desc}</p>
+            </div>
+          ))}
+        </aside>
+      </div>
+    </section>
+    <CaseGrid slugs={["dongnae-board", "ulsan-gpu-board"]} />
+    <BottomCta openForm={openForm} title="PC 견적, 편하게 물어보세요" />
+  </>
+);
+
 const ServiceView = ({ page, openForm }: { page: ServicePage; openForm: OpenForm }) => (
   <>
     <PageHeader path={servicePath(page.slug)} label="서비스 안내" h1={page.h1} intro={page.intro} image={page.image} openForm={openForm} />
@@ -248,6 +302,7 @@ const ServiceView = ({ page, openForm }: { page: ServicePage; openForm: OpenForm
       </div>
     </section>
 
+    {page.slug === "custom-pc" && <EstimateBanner />}
     <CaseGrid slugs={page.cases} />
     <FaqList faqs={page.faqs} />
     <BlogPosts title={`${page.name} 관련 글`} posts={topicPosts(page.slug)} />
@@ -423,5 +478,6 @@ export const SubPage = ({ route, openForm }: { route: Exclude<Route, { type: "ho
     case "area": return <AreaView page={route.page} openForm={openForm} />;
     case "case": return <CaseView page={route.page} openForm={openForm} />;
     case "blog": return <BlogView openForm={openForm} />;
+    case "estimate": return <EstimateView openForm={openForm} />;
   }
 };

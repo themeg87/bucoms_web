@@ -122,6 +122,8 @@ async function startServer() {
     const phone = clean(body.phone, 20);
     const address = clean(body.address, 200);
     const description = clean(body.description, 1000);
+    // kind: "pc-estimate" = 홈페이지 PC 견적 요청 페이지(/pc-estimate/), 그 외 = 수리 문의
+    const isEstimate = body.kind === "pc-estimate";
 
     if (!name || !address || !/^[0-9\-\s]{9,15}$/.test(phone)) {
       return res.status(400).json({ success: false, message: "이름, 연락처, 주소를 정확히 입력해 주세요." });
@@ -132,17 +134,17 @@ async function startServer() {
     }
 
     const message = `
-[새로운 수리 요청]
+${isEstimate ? "[새로운 PC 견적 요청]" : "[새로운 수리 요청]"}
 이름: ${name}
 연락처: ${phone}
-주소: ${address}
+${isEstimate ? "지역" : "주소"}: ${address}
 요청내용: ${description || "없음"}
     `.trim();
 
     // 텔레그램 알림과 시트 기록은 서로 독립적으로 시도 (한쪽이 실패해도 다른 쪽은 진행)
     const [telegramResult, sheetsResult] = await Promise.allSettled([
       sendTelegram(message),
-      appendToGoogleSheet({ name, phone, address, description }),
+      appendToGoogleSheet({ name, phone, address, description: isEstimate ? `[PC견적] ${description}` : description }),
     ]);
 
     if (telegramResult.status === "rejected") console.error("Telegram Error:", telegramResult.reason?.message);

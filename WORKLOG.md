@@ -10,17 +10,17 @@
 | 사이트 | https://www.bucoms.com (bucoms.com·http → www 로 308 이동) |
 | 저장소 | GitHub `themeg87/bucoms_web` (현재 Public — 사장님이 Private 로 돌릴 예정) · 로컬 `/home/pi5/share/bucoms_web` |
 | 배포 | `main` 에 push → Vercel 자동 배포 (vercel.json: `@vercel/static-build` + `server.ts` API) |
-| 구조 | React 19 + Vite + Tailwind 4 · 빌드 때 30페이지 프리렌더 · Express `server.ts`(문의 API → 텔레그램 + 구글 시트) |
+| 구조 | React 19 + Vite + Tailwind 4 · 빌드 때 31페이지 프리렌더 · Express `server.ts`(문의 API → 텔레그램 + 구글 시트) |
 | 사업자 | 부컴 · 대표 최영중 · 427-50-01058 · 부산시 동래구 동래로 117 · 010-2222-0170 · c870120@naver.com |
 | 운영 | 연중무휴 10:00-22:00 · 출장 부산·울산·김해·양산 · 출장비 10,000원(수리 시 면제) · 30일 무상 A/S |
 | 가격 | (사장님 지정 2026-09-26) 출장비 10,000 · 청소 55,000 · 간단한 수리 55,000 · 기본 공임비 55,000 · 그 외 수리·부품 교체 점검 후 안내 — 당근 가격표와 같게 유지 |
-| 통계 | GA4 `G-BWZLZS95V8` (`src/analytics.ts`) — click_phone·click_kakao·click_blog·open_inquiry_form·submit_inquiry |
+| 통계 | GA4 `G-BWZLZS95V8` (`src/analytics.ts`) — click_phone·click_kakao·click_blog·open_inquiry_form·submit_inquiry·submit_pc_estimate |
 | 검색 등록 | 구글 서치콘솔(URL 접두어 https://www.bucoms.com/) · 네이버 서치어드바이저 — 둘 다 사이트맵 제출 완료 |
 
 ## 2. 파일 지도
 
 - `src/App.tsx` — 공통 틀(메뉴·상단 띠·푸터·문의 창·떠 있는 버튼) + 홈 화면 섹션. `App({ path })` 가 주소에 따라 홈/하위 페이지.
-- `src/pages/SubPage.tsx` — 서비스·지역·시공 사례 페이지 화면.
+- `src/pages/SubPage.tsx` — 서비스·지역·시공 사례·블로그 목록·PC 견적 요청 페이지 화면. `EstimateForm.tsx` — /pc-estimate/ 폼(→ /api/inquiry kind=pc-estimate, 텔레그램 제목 [새로운 PC 견적 요청], 시트 설명 앞 [PC견적]).
 - `src/content/pages.ts` — 서비스 6 · 지역 16 · 사례 6 페이지 내용, 주소 목록(`ALL_PATHS`), 페이지별 제목·설명(`pageMeta`, 설명 80자 이내).
 - `src/content/blogPosts.ts` — 블로그 글 목록에서 생성(직접 수정 금지): 지역·주제별 글, 사례 원본 글(`CASE_POSTS`), 전체 글(`ALL_POSTS` → `/blog/` 페이지). 갱신: `python3 scripts/sync_blog_posts.py` → 빌드·배포.
 - `src/constants/business.ts` — 사업자·연락처·운영시간·지역 (사이트 전체가 사용). `legal.ts` — 약관·개인정보처리방침.
@@ -33,7 +33,7 @@
 
 ```bash
 cd /home/pi5/share/bucoms_web
-npx tsc --noEmit && npm run build            # 타입 검사 + 30페이지 빌드
+npx tsc --noEmit && npm run build            # 타입 검사 + 31페이지 빌드
 PORT=3977 NODE_ENV=production npx tsx server.ts   # 로컬 확인 (3000번은 ComDoctor 가 사용 중!)
 python3 scripts/sync_blog_posts.py           # 블로그 새 글 반영
 git push origin main                         # 토큰은 ~/.config/git/bucoms_credentials (저장소 전용 credential.helper, 600)
@@ -50,6 +50,8 @@ git push origin main                         # 토큰은 ~/.config/git/bucoms_cr
 - 지역 페이지는 그 지역 블로그 글·사례가 있을 때만 만든다(도어웨이 페이지 방지). 울산·김해·양산은 아직 없음.
 
 ## 5. 현재 상태 · 남은 일
+
+- [ ] 사장님: /pc-estimate/ 에서 실제 견적 요청 1건 → 텔레그램 "[새로운 PC 견적 요청]"·시트 도착 확인 (로컬에선 전송을 가로채 내용만 확인함)
 
 - [x] 사장님: 실제 문의 → 텔레그램 도착 확인 (2026-09-26)
 - [ ] 사장님: 구글 비즈니스 프로필 등록 → 이후 리뷰 요청 QR 카드 제작
@@ -80,3 +82,4 @@ git push origin main                         # 토큰은 ~/.config/git/bucoms_cr
 - 2026-09-26 `cee5745` 가격 개편 반영: 홈 비용 안내 4칸(출장비·청소·간단한 수리·기본 공임비), 컴퓨터수리 페이지 가격 4항목, 그 외 비용은 점검 후 안내.
 - 2026-09-26 `79600ea` 가격 통일: JSON-LD priceRange 갱신. (저장소 밖) 네이버 스마트플레이스 가격정보 '상담후측정' → 출장비·청소·간단한 수리·기본 공임비·그 외 5항목 + 가격표 사진. 블로그 글(청소 55,000)·견적 사이트(조립 공임 55,000)는 이미 같음.
 - 2026-09-26 `477189c` 영업시간 09:00 → 10:00 (사장님 지정, 당근·네이버와 통일): business.ts hours, JSON-LD opens.
+- 2026-09-26 (커밋 아래) PC 견적 요청 페이지 /pc-estimate/ (용도·예산·게임/프로그램·추가 품목 → 문의 API kind=pc-estimate). 조립PC 서비스 페이지 배너·푸터 링크. 사장님이 견적 도구(bench_mark_danawa)로 견적서 링크를 보내는 흐름.
