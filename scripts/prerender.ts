@@ -47,6 +47,10 @@ for (const pagePath of ALL_PATHS as string[]) {
     html = html.replace("</head>", `  <script type="application/ld+json">${JSON.stringify(breadcrumbLd)}</script>\n  </head>`);
   }
 
+  for (const ld of (meta.structuredData ?? []) as object[]) {
+    html = html.replace("</head>", `  <script type="application/ld+json">${JSON.stringify(ld).replace(/</g, "\\u003c")}</script>\n  </head>`);
+  }
+
   const out = path.join(dist, pagePath, "index.html");
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, html);

@@ -581,7 +581,7 @@ export default function App({ path = "/" }: { path?: string }) {
                 <span className="text-brand italic font-serif font-bold">Perfect</span> RESULT.
               </p>
               <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight mb-4">
-                부산 컴퓨터 출장수리 · CCTV 설치, 부컴
+                부산 컴퓨터수리 · 출장수리 · CCTV 설치, 부컴
               </h1>
               <p className="text-lg text-slate-500 mb-12 max-w-xl leading-relaxed font-medium">
                 {BUSINESS.serviceArea} 어디든 10년 경력 엔지니어가 직접 방문합니다.<br />
@@ -1026,7 +1026,7 @@ export default function App({ path = "/" }: { path?: string }) {
             <div className="md:col-span-5">
               <Logo size="text-2xl" className="mb-8" />
               <p className="text-slate-500 font-medium max-w-sm mb-10 leading-relaxed">
-                부컴은 10년 경력의 베테랑 엔지니어가 직접 운영하는 부산 컴퓨터 출장수리 · CCTV 설치 전문 업체입니다.
+                부컴은 10년 경력의 베테랑 엔지니어가 직접 운영하는 부산 컴퓨터수리 · 출장수리 · CCTV 설치 전문 업체입니다.
                 정직한 진단, 투명한 서비스, 완벽한 기술력으로 고객님의 디지털 라이프를 지킵니다.
               </p>
             </div>

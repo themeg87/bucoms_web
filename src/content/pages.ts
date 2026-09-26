@@ -185,9 +185,9 @@ export const SERVICE_PAGES: ServicePage[] = [
   {
     slug: "computer-repair",
     name: "컴퓨터 출장수리",
-    title: "부산 컴퓨터 출장수리",
-    description: "부산 컴퓨터 출장수리 부컴. 전원 불량·꺼짐·블루스크린·느려짐, 10년 경력 엔지니어가 직접 방문해 점검합니다.",
-    h1: "부산 컴퓨터 출장수리",
+    title: "부산 컴퓨터수리 · 출장수리",
+    description: "부산 컴퓨터수리·출장수리 부컴. 전원 불량·꺼짐·블루스크린·느려짐, 10년 경력 엔지니어가 직접 방문해 점검합니다.",
+    h1: "부산 컴퓨터수리 · 출장수리",
     intro: [
       "컴퓨터가 안 켜지거나, 쓰다가 꺼지거나, 갑자기 느려졌다면 부컴이 직접 방문합니다.",
       "10년 경력 엔지니어가 본체를 열고 부품을 하나씩 점검해 원인을 찾고, 비용을 먼저 안내한 뒤 동의하신 경우에만 수리합니다."
@@ -415,12 +415,38 @@ export const ALL_PATHS = [
 
 // 검색 결과 설명은 네이버 권장에 맞춰 80자 이내 (scripts/prerender.ts 에서 검사)
 export const DESCRIPTION_MAX = 80;
-export const HOME_DESCRIPTION = "부산 컴퓨터 출장수리·CCTV 설치 부컴. 10년 경력 엔지니어 직접 방문, 조립PC·데이터 복구·NAS까지. 출장비 10,000원.";
+export const HOME_DESCRIPTION = "부산 컴퓨터수리·출장수리·CCTV 설치 부컴. 10년 경력 엔지니어 직접 방문, 조립PC·데이터 복구·NAS까지. 출장비 10,000원.";
 
 function caseDescription(c: CasePage) {
   const base = `${c.area} ${c.category} 사례: ${c.title}.`;
   const withSuffix = `${base} 부컴이 직접 다녀온 현장입니다.`;
   return withSuffix.length <= DESCRIPTION_MAX ? withSuffix : base;
+}
+
+// 서비스 페이지 검색엔진용 정보: 서비스(Service) + 자주 묻는 질문(FAQPage)
+function serviceStructuredData(page: ServicePage) {
+  const url = `${SITE_URL}${servicePath(page.slug)}`;
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      name: page.title,
+      serviceType: page.name,
+      description: page.description,
+      url,
+      provider: { "@id": `${SITE_URL}/#business` },
+      areaServed: ["부산광역시", "울산광역시", "경상남도 김해시", "경상남도 양산시"]
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: page.faqs.map(f => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a }
+      }))
+    }
+  ];
 }
 
 // 페이지별 검색 제목·설명·이동 경로
@@ -434,7 +460,8 @@ export function pageMeta(pathname: string) {
         title: `${route.page.title} | 부컴 BUCOM`,
         description: route.page.description,
         image: route.page.image?.src,
-        breadcrumbs: [home, { name: route.page.name, path: servicePath(route.page.slug) }]
+        breadcrumbs: [home, { name: route.page.name, path: servicePath(route.page.slug) }],
+        structuredData: serviceStructuredData(route.page)
       };
     case "area": {
       const a = route.page;
@@ -465,7 +492,7 @@ export function pageMeta(pathname: string) {
     default:
       return {
         path: "/",
-        title: "부산 컴퓨터 출장수리 · CCTV 설치 | 부컴 BUCOM",
+        title: "부산 컴퓨터수리 · 출장수리 · CCTV 설치 | 부컴 BUCOM",
         description: HOME_DESCRIPTION,
         image: undefined,
         breadcrumbs: [home]
